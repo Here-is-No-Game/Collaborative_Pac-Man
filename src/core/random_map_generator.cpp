@@ -1,15 +1,13 @@
 #include "../../include/random_map_generator.h"
-#include <ctime>
 #include <algorithm>
+#include <ctime>
 
 RandomMapGenerator::RandomMapGenerator(int w, int h, float ratio)
     : width(w), height(h), dotRatio(ratio), currentMap(nullptr) {
     randomEngine.seed(static_cast<unsigned int>(std::time(nullptr)));
 }
 
-void RandomMapGenerator::setSeed(unsigned int seed) {
-    randomEngine.seed(seed);
-}
+void RandomMapGenerator::setSeed(unsigned int seed) { randomEngine.seed(seed); }
 
 GameMap RandomMapGenerator::generateMap() {
     GameMap map(width, height);
@@ -147,7 +145,7 @@ void RandomMapGenerator::placeDots() {
 std::vector<Position> RandomMapGenerator::generateCharacterPositions(int characterCount) {
     std::vector<Position> positions;
     int attempts = 0;
-    const int maxAttempts = 10000;  // 增加尝试次数
+    const int maxAttempts = 10000; // 增加尝试次数
 
     while (positions.size() < static_cast<size_t>(characterCount) && attempts < maxAttempts) {
         int x = 1 + (randomEngine() % (width - 2));
@@ -164,8 +162,8 @@ std::vector<Position> RandomMapGenerator::generateCharacterPositions(int charact
     return positions;
 }
 
-bool RandomMapGenerator::isValidCharacterPosition(const Position& pos,
-                                                   const std::vector<Position>& existingPositions) const {
+bool RandomMapGenerator::isValidCharacterPosition(const Position &pos,
+                                                  const std::vector<Position> &existingPositions) const {
     // 检查是否是空地或有豆子的位置
     if (!currentMap->isEmpty(pos) && !currentMap->hasDot(pos)) {
         return false;
@@ -173,7 +171,7 @@ bool RandomMapGenerator::isValidCharacterPosition(const Position& pos,
 
     // 检查与其他角色的距离（降低最小距离要求）
     int minDistance = (existingPositions.size() < 2) ? GameConfig::MIN_DISTANCE_BETWEEN_CHARACTERS : 3;
-    for (const auto& existing : existingPositions) {
+    for (const auto &existing : existingPositions) {
         if (pos.manhattanDistance(existing) < minDistance) {
             return false;
         }
@@ -190,9 +188,7 @@ bool RandomMapGenerator::isValidCharacterPosition(const Position& pos,
         }
     }
 
-    return emptyCount >= 3;  // 降低到至少3个可移动的格子
+    return emptyCount >= 3; // 降低到至少3个可移动的格子
 }
 
-bool RandomMapGenerator::isInBounds(int x, int y) const {
-    return x >= 0 && x < width && y >= 0 && y < height;
-}
+bool RandomMapGenerator::isInBounds(int x, int y) const { return x >= 0 && x < width && y >= 0 && y < height; }

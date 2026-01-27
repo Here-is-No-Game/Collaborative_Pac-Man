@@ -6,13 +6,13 @@
 
 // 游戏控制系统 - 处理暂停、保存、加载、回放等功能
 class GameControlSystem {
-private:
+  private:
     bool isPaused;
-    std::vector<GameStateManager> stateHistory;  // 状态历史记录
+    std::vector<GameStateManager> stateHistory; // 状态历史记录
     int currentHistoryIndex;
     int maxHistorySize;
 
-public:
+  public:
     GameControlSystem();
     explicit GameControlSystem(int maxHistory);
 
@@ -23,11 +23,11 @@ public:
     void togglePause();
 
     // 状态保存/加载
-    bool saveGame(const GameStateManager& gameState, const std::string& filename) const;
-    bool loadGame(GameStateManager& gameState, const std::string& filename) const;
+    bool saveGame(const GameStateManager &gameState, const std::string &filename) const;
+    bool loadGame(GameStateManager &gameState, const std::string &filename) const;
 
     // 回放功能
-    void recordState(const GameStateManager& gameState);
+    void recordState(const GameStateManager &gameState);
     bool canUndo() const;
     bool canRedo() const;
     GameStateManager undo();

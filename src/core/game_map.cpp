@@ -2,19 +2,9 @@
 #include <fstream>
 #include <sstream>
 
-GameMap::GameMap()
-    : width(GameConfig::MAP_WIDTH),
-      height(GameConfig::MAP_HEIGHT),
-      totalDots(0) {
-    initialize();
-}
+GameMap::GameMap() : width(GameConfig::MAP_WIDTH), height(GameConfig::MAP_HEIGHT), totalDots(0) { initialize(); }
 
-GameMap::GameMap(int w, int h)
-    : width(w),
-      height(h),
-      totalDots(0) {
-    initialize();
-}
+GameMap::GameMap(int w, int h) : width(w), height(h), totalDots(0) { initialize(); }
 
 void GameMap::initialize() {
     grid.resize(height);
@@ -39,9 +29,7 @@ CellType GameMap::getCell(int x, int y) const {
     return grid[y][x];
 }
 
-CellType GameMap::getCell(const Position& pos) const {
-    return getCell(pos.x, pos.y);
-}
+CellType GameMap::getCell(const Position &pos) const { return getCell(pos.x, pos.y); }
 
 void GameMap::setCell(int x, int y, CellType type) {
     if (isInBounds(x, y)) {
@@ -49,29 +37,17 @@ void GameMap::setCell(int x, int y, CellType type) {
     }
 }
 
-void GameMap::setCell(const Position& pos, CellType type) {
-    setCell(pos.x, pos.y, type);
-}
+void GameMap::setCell(const Position &pos, CellType type) { setCell(pos.x, pos.y, type); }
 
-bool GameMap::isInBounds(int x, int y) const {
-    return x >= 0 && x < width && y >= 0 && y < height;
-}
+bool GameMap::isInBounds(int x, int y) const { return x >= 0 && x < width && y >= 0 && y < height; }
 
-bool GameMap::isInBounds(const Position& pos) const {
-    return isInBounds(pos.x, pos.y);
-}
+bool GameMap::isInBounds(const Position &pos) const { return isInBounds(pos.x, pos.y); }
 
-bool GameMap::isWall(const Position& pos) const {
-    return getCell(pos) == CellType::WALL;
-}
+bool GameMap::isWall(const Position &pos) const { return getCell(pos) == CellType::WALL; }
 
-bool GameMap::isEmpty(const Position& pos) const {
-    return getCell(pos) == CellType::EMPTY;
-}
+bool GameMap::isEmpty(const Position &pos) const { return getCell(pos) == CellType::EMPTY; }
 
-bool GameMap::hasDot(const Position& pos) const {
-    return getCell(pos) == CellType::DOT;
-}
+bool GameMap::hasDot(const Position &pos) const { return getCell(pos) == CellType::DOT; }
 
 int GameMap::countDots() const {
     int count = 0;
@@ -97,7 +73,7 @@ int GameMap::countEmptyCells() const {
     return count;
 }
 
-bool GameMap::loadFromFile(const std::string& filename) {
+bool GameMap::loadFromFile(const std::string &filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         return false;
@@ -108,7 +84,7 @@ bool GameMap::loadFromFile(const std::string& filename) {
     return loadFromString(buffer.str());
 }
 
-bool GameMap::saveToFile(const std::string& filename) const {
+bool GameMap::saveToFile(const std::string &filename) const {
     std::ofstream file(filename);
     if (!file.is_open()) {
         return false;
@@ -118,10 +94,18 @@ bool GameMap::saveToFile(const std::string& filename) const {
         for (int x = 0; x < width; ++x) {
             char c;
             switch (grid[y][x]) {
-                case CellType::EMPTY: c = ' '; break;
-                case CellType::WALL: c = '#'; break;
-                case CellType::DOT: c = '.'; break;
-                default: c = '?'; break;
+            case CellType::EMPTY:
+                c = ' ';
+                break;
+            case CellType::WALL:
+                c = '#';
+                break;
+            case CellType::DOT:
+                c = '.';
+                break;
+            default:
+                c = '?';
+                break;
             }
             file << c;
         }
@@ -131,7 +115,7 @@ bool GameMap::saveToFile(const std::string& filename) const {
     return true;
 }
 
-bool GameMap::loadFromString(const std::string& mapData) {
+bool GameMap::loadFromString(const std::string &mapData) {
     std::istringstream stream(mapData);
     std::string line;
 
@@ -148,10 +132,18 @@ bool GameMap::loadFromString(const std::string& mapData) {
             char c = line[x];
             CellType type;
             switch (c) {
-                case ' ': type = CellType::EMPTY; break;
-                case '#': type = CellType::WALL; break;
-                case '.': type = CellType::DOT; break;
-                default: type = CellType::WALL; break;
+            case ' ':
+                type = CellType::EMPTY;
+                break;
+            case '#':
+                type = CellType::WALL;
+                break;
+            case '.':
+                type = CellType::DOT;
+                break;
+            default:
+                type = CellType::WALL;
+                break;
             }
             grid[y][x] = type;
         }
@@ -207,10 +199,18 @@ std::string GameMap::saveToString() const {
         for (int x = 0; x < width; ++x) {
             char c;
             switch (grid[y][x]) {
-                case CellType::EMPTY: c = ' '; break;
-                case CellType::WALL: c = '#'; break;
-                case CellType::DOT: c = '.'; break;
-                default: c = '?'; break;
+            case CellType::EMPTY:
+                c = ' ';
+                break;
+            case CellType::WALL:
+                c = '#';
+                break;
+            case CellType::DOT:
+                c = '.';
+                break;
+            default:
+                c = '?';
+                break;
             }
             ss << c;
         }

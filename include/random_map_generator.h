@@ -6,12 +6,12 @@
 #include <vector>
 
 class RandomMapGenerator {
-private:
+  private:
     int width;
     int height;
     float dotRatio;
     std::mt19937 randomEngine;
-    GameMap* currentMap;
+    GameMap *currentMap;
 
     // 深度优先搜索生成迷宫
     void generateMaze(int startX, int startY);
@@ -22,14 +22,14 @@ private:
     // 辅助方法
     bool isInBounds(int x, int y) const;
 
-public:
+  public:
     RandomMapGenerator(int w, int h, float dotRatio);
 
     void setSeed(unsigned int seed);
     GameMap generateMap();
     std::vector<Position> generateCharacterPositions(int characterCount);
 
-private:
+  private:
     void placeDots();
-    bool isValidCharacterPosition(const Position& pos, const std::vector<Position>& existingPositions) const;
+    bool isValidCharacterPosition(const Position &pos, const std::vector<Position> &existingPositions) const;
 };

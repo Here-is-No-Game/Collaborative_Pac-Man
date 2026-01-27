@@ -1,15 +1,13 @@
 #include "../../include/game_state_manager.h"
 
-GameStateManager::GameStateManager()
-    : score(0), remainingDots(0), turnCount(1) {
-}
+GameStateManager::GameStateManager() : score(0), remainingDots(0), turnCount(1) {}
 
-GameStateManager::GameStateManager(const GameMap& gameMap, const std::vector<Character>& chars)
+GameStateManager::GameStateManager(const GameMap &gameMap, const std::vector<Character> &chars)
     : map(gameMap), characters(chars), score(0), remainingDots(0), turnCount(1) {
     remainingDots = map.countDots();
 }
 
-void GameStateManager::initializeGame(const GameMap& gameMap, const std::vector<Character>& chars) {
+void GameStateManager::initializeGame(const GameMap &gameMap, const std::vector<Character> &chars) {
     map = gameMap;
     characters = chars;
     score = 0;
@@ -17,7 +15,7 @@ void GameStateManager::initializeGame(const GameMap& gameMap, const std::vector<
     remainingDots = map.countDots();
 }
 
-const Character& GameStateManager::getCharacter(int index) const {
+const Character &GameStateManager::getCharacter(int index) const {
     if (index >= 0 && index < (int)characters.size()) {
         return characters[index];
     }
@@ -25,8 +23,8 @@ const Character& GameStateManager::getCharacter(int index) const {
     return dummy;
 }
 
-const Character& GameStateManager::getPacman() const {
-    for (const auto& character : characters) {
+const Character &GameStateManager::getPacman() const {
+    for (const auto &character : characters) {
         if (character.type == CharacterType::PACMAN) {
             return character;
         }
@@ -37,7 +35,7 @@ const Character& GameStateManager::getPacman() const {
 
 std::vector<Character> GameStateManager::getMonsters() const {
     std::vector<Character> monsters;
-    for (const auto& character : characters) {
+    for (const auto &character : characters) {
         if (character.type == CharacterType::MONSTER) {
             monsters.push_back(character);
         }
@@ -45,13 +43,13 @@ std::vector<Character> GameStateManager::getMonsters() const {
     return monsters;
 }
 
-void GameStateManager::updateCharacterPosition(int index, const Position& newPos) {
+void GameStateManager::updateCharacterPosition(int index, const Position &newPos) {
     if (index >= 0 && index < (int)characters.size()) {
         characters[index].position = newPos;
     }
 }
 
-void GameStateManager::consumeDot(const Position& pos) {
+void GameStateManager::consumeDot(const Position &pos) {
     if (map.hasDot(pos)) {
         map.setCell(pos, CellType::EMPTY);
         remainingDots--;
@@ -65,34 +63,22 @@ void GameStateManager::setCharacterAlive(int index, bool alive) {
     }
 }
 
-void GameStateManager::incrementTurnCount() {
-    turnCount++;
-}
+void GameStateManager::incrementTurnCount() { turnCount++; }
 
-void GameStateManager::incrementScore(int points) {
-    score += points;
-}
+void GameStateManager::incrementScore(int points) { score += points; }
 
-CellType GameStateManager::getCellType(const Position& pos) const {
-    return map.getCell(pos);
-}
+CellType GameStateManager::getCellType(const Position &pos) const { return map.getCell(pos); }
 
-bool GameStateManager::isValidPosition(const Position& pos) const {
-    return map.isInBounds(pos);
-}
+bool GameStateManager::isValidPosition(const Position &pos) const { return map.isInBounds(pos); }
 
-bool GameStateManager::isWall(const Position& pos) const {
-    return map.isWall(pos);
-}
+bool GameStateManager::isWall(const Position &pos) const { return map.isWall(pos); }
 
-bool GameStateManager::hasDot(const Position& pos) const {
-    return map.hasDot(pos);
-}
+bool GameStateManager::hasDot(const Position &pos) const { return map.hasDot(pos); }
 
 bool GameStateManager::isGameOver() const {
     // 检查吃豆人是否存活
     bool pacmanAlive = false;
-    for (const auto& character : characters) {
+    for (const auto &character : characters) {
         if (character.type == CharacterType::PACMAN && character.isAlive) {
             pacmanAlive = true;
             break;
@@ -100,12 +86,12 @@ bool GameStateManager::isGameOver() const {
     }
 
     if (!pacmanAlive) {
-        return true;  // 吃豆人死亡，游戏结束
+        return true; // 吃豆人死亡，游戏结束
     }
 
     // 检查是否收集完所有豆子
     if (remainingDots == 0) {
-        return true;  // 胜利
+        return true; // 胜利
     }
 
     return false;
@@ -121,7 +107,7 @@ GameState GameStateManager::getCurrentState() const {
     return state;
 }
 
-void GameStateManager::restoreState(const GameState& state) {
+void GameStateManager::restoreState(const GameState &state) {
     map = state.map;
     characters = state.characters;
     score = state.score;
@@ -129,10 +115,6 @@ void GameStateManager::restoreState(const GameState& state) {
     turnCount = state.turnCount;
 }
 
-void GameStateManager::setCharacters(const std::vector<Character>& chars) {
-    characters = chars;
-}
+void GameStateManager::setCharacters(const std::vector<Character> &chars) { characters = chars; }
 
-void GameStateManager::setScore(int newScore) {
-    score = newScore;
-}
+void GameStateManager::setScore(int newScore) { score = newScore; }

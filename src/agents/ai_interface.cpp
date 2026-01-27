@@ -1,6 +1,6 @@
 #include "../../include/ai_interface.h"
 
-Direction AIInterface::getRelativeDirection(const VisibleArea& visibleArea, int targetX, int targetY) const {
+Direction AIInterface::getRelativeDirection(const VisibleArea &visibleArea, int targetX, int targetY) const {
     int centerX = visibleArea.getWidth() / 2;
     int centerY = visibleArea.getHeight() / 2;
 
@@ -21,7 +21,7 @@ Direction AIInterface::getRelativeDirection(const VisibleArea& visibleArea, int 
     return Direction::STAY;
 }
 
-std::vector<Direction> AIInterface::getValidMoves(const VisibleArea& visibleArea) const {
+std::vector<Direction> AIInterface::getValidMoves(const VisibleArea &visibleArea) const {
     std::vector<Direction> validMoves;
 
     Direction directions[] = {Direction::UP, Direction::DOWN, Direction::LEFT, Direction::RIGHT};
@@ -40,7 +40,7 @@ std::vector<Direction> AIInterface::getValidMoves(const VisibleArea& visibleArea
     return validMoves;
 }
 
-bool AIInterface::canMove(const VisibleArea& visibleArea, Direction dir) const {
+bool AIInterface::canMove(const VisibleArea &visibleArea, Direction dir) const {
     int centerX = visibleArea.getWidth() / 2;
     int centerY = visibleArea.getHeight() / 2;
 
@@ -51,8 +51,7 @@ bool AIInterface::canMove(const VisibleArea& visibleArea, Direction dir) const {
     int newY = centerY + dy;
 
     // 检查是否在边界内
-    if (newX < 0 || newX >= visibleArea.getWidth() ||
-        newY < 0 || newY >= visibleArea.getHeight()) {
+    if (newX < 0 || newX >= visibleArea.getWidth() || newY < 0 || newY >= visibleArea.getHeight()) {
         return false;
     }
 
@@ -60,15 +59,24 @@ bool AIInterface::canMove(const VisibleArea& visibleArea, Direction dir) const {
     return visibleArea.getCell(newX, newY) != VisibleArea::CellContent::WALL;
 }
 
-void AIInterface::getDirectionOffset(Direction dir, int& dx, int& dy) const {
+void AIInterface::getDirectionOffset(Direction dir, int &dx, int &dy) const {
     dx = 0;
     dy = 0;
 
     switch (dir) {
-        case Direction::UP:    dy = -1; break;
-        case Direction::DOWN:  dy = 1;  break;
-        case Direction::LEFT:  dx = -1; break;
-        case Direction::RIGHT: dx = 1;  break;
-        case Direction::STAY:  break;
+    case Direction::UP:
+        dy = -1;
+        break;
+    case Direction::DOWN:
+        dy = 1;
+        break;
+    case Direction::LEFT:
+        dx = -1;
+        break;
+    case Direction::RIGHT:
+        dx = 1;
+        break;
+    case Direction::STAY:
+        break;
     }
 }

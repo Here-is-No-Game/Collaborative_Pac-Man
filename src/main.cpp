@@ -1,16 +1,16 @@
-#include <windows.h>
-#include <memory>
-#include <random>
-#include <algorithm>
 #include "../include/config.h"
 #include "../include/game_map.h"
-#include "../include/random_map_generator.h"
-#include "../include/turn_based_game_loop.h"
-#include "../include/pacman_ai.h"
-#include "../include/monster_ai.h"
 #include "../include/management_system.h"
+#include "../include/monster_ai.h"
+#include "../include/pacman_ai.h"
+#include "../include/random_map_generator.h"
 #include "../include/renderer.h"
+#include "../include/turn_based_game_loop.h"
 #include "../include/unicode_helper.h"
+#include <algorithm>
+#include <memory>
+#include <random>
+#include <windows.h>
 
 // 全局变量
 std::unique_ptr<TurnBasedGameLoop> gameLoop;
@@ -18,7 +18,7 @@ std::unique_ptr<Renderer> renderer;
 HWND g_hwnd = nullptr;
 bool gameRunning = true;
 int frameCounter = 0;
-const int FRAMES_PER_TURN = 30;  // 每30帧执行一个回合（约0.5秒一回合）
+const int FRAMES_PER_TURN = 30; // 每30帧执行一个回合（约0.5秒一回合）
 
 // 窗口过程函数
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -47,7 +47,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     // 计算客户区大小
     int clientWidth = GameConfig::MAP_WIDTH * GameConfig::CELL_SIZE;
-    int clientHeight = GameConfig::MAP_HEIGHT * GameConfig::CELL_SIZE + 50;  // 额外空间显示信息
+    int clientHeight = GameConfig::MAP_HEIGHT * GameConfig::CELL_SIZE + 50; // 额外空间显示信息
 
     // 计算窗口大小（包含边框和标题栏）
     RECT rect = {0, 0, clientWidth, clientHeight};
@@ -56,18 +56,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     int windowHeight = rect.bottom - rect.top;
 
     // 创建窗口
-    g_hwnd = CreateWindowExW(
-        0,
-        CLASS_NAME,
-        L"Collaborative Pac-Man",
-        WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT,
-        windowWidth, windowHeight,
-        nullptr,
-        nullptr,
-        hInstance,
-        nullptr
-    );
+    g_hwnd = CreateWindowExW(0, CLASS_NAME, L"Collaborative Pac-Man", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+                             windowWidth, windowHeight, nullptr, nullptr, hInstance, nullptr);
 
     if (g_hwnd == nullptr) {
         return 0;
@@ -93,39 +83,39 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     switch (uMsg) {
-        case WM_DESTROY:
-            KillTimer(hwnd, 1);
-            PostQuitMessage(0);
-            return 0;
+    case WM_DESTROY:
+        KillTimer(hwnd, 1);
+        PostQuitMessage(0);
+        return 0;
 
-        case WM_TIMER:
-            if (wParam == 1 && gameRunning) {
-                UpdateGame();
-                RenderGame();
-            }
-            return 0;
-
-        case WM_KEYDOWN:
-            switch (wParam) {
-                case VK_SPACE:
-                    // 暂停/恢复
-                    if (gameLoop) {
-                        gameLoop->getControlSystem().togglePause();
-                    }
-                    break;
-                case VK_ESCAPE:
-                    // 退出游戏
-                    PostQuitMessage(0);
-                    break;
-            }
-            return 0;
-
-        case WM_PAINT: {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
-            EndPaint(hwnd, &ps);
-            return 0;
+    case WM_TIMER:
+        if (wParam == 1 && gameRunning) {
+            UpdateGame();
+            RenderGame();
         }
+        return 0;
+
+    case WM_KEYDOWN:
+        switch (wParam) {
+        case VK_SPACE:
+            // 暂停/恢复
+            if (gameLoop) {
+                gameLoop->getControlSystem().togglePause();
+            }
+            break;
+        case VK_ESCAPE:
+            // 退出游戏
+            PostQuitMessage(0);
+            break;
+        }
+        return 0;
+
+    case WM_PAINT: {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hwnd, &ps);
+        EndPaint(hwnd, &ps);
+        return 0;
+    }
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -153,9 +143,8 @@ void InitializeGame(HWND hwnd) {
     // 检查是否有足够的位置
     int totalCharacters = GameConfig::PACMAN_COUNT + GameConfig::MONSTER_COUNT;
     if (validPositions.size() < static_cast<size_t>(totalCharacters)) {
-        std::wstring errorMsg = L"Not enough empty spaces on map. Found: " +
-                                std::to_wstring(validPositions.size()) + L", Required: " +
-                                std::to_wstring(totalCharacters);
+        std::wstring errorMsg = L"Not enough empty spaces on map. Found: " + std::to_wstring(validPositions.size()) +
+                                L", Required: " + std::to_wstring(totalCharacters);
         MessageBoxW(g_hwnd, errorMsg.c_str(), L"Initialization Error", MB_OK | MB_ICONERROR);
         PostQuitMessage(1);
         return;
@@ -227,7 +216,7 @@ void UpdateGame() {
                 gameRunning = false;
 
                 // 显示游戏结束消息
-                const auto& gameState = gameLoop->getGameState();
+                const auto &gameState = gameLoop->getGameState();
                 std::string message;
 
                 if (gameState.getRemainingDots() == 0) {

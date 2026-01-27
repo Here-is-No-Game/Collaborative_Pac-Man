@@ -5,22 +5,16 @@
 
 // VisibleArea 类
 class VisibleArea {
-public:
-    enum class CellContent {
-        EMPTY,
-        WALL,
-        DOT,
-        PACMAN,
-        MONSTER
-    };
+  public:
+    enum class CellContent { EMPTY, WALL, DOT, PACMAN, MONSTER };
 
-private:
+  private:
     std::vector<std::vector<CellContent>> grid;
     int width;
     int height;
     Position centerPosition;
 
-public:
+  public:
     VisibleArea(int w, int h);
 
     CellContent getCell(int x, int y) const;

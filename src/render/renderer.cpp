@@ -3,22 +3,19 @@
 #include "../../include/unicode_helper.h"
 
 Renderer::Renderer(HWND window, int width, int height)
-    : hwnd(window), hdcMem(nullptr), hbmMem(nullptr), hbmOld(nullptr),
-      windowWidth(width), windowHeight(height) {
+    : hwnd(window), hdcMem(nullptr), hbmMem(nullptr), hbmOld(nullptr), windowWidth(width), windowHeight(height) {
 
     // 定义颜色
-    colorWall = RGB(0, 100, 0);           // 暗绿色墙壁
-    colorEmpty = RGB(0, 0, 0);            // 黑色背景
-    colorDot = RGB(255, 255, 0);          // 黄色豆子
-    colorPacman = RGB(255, 165, 0);       // 橙色吃豆人
-    colorMonster = RGB(255, 0, 0);        // 红色怪物
+    colorWall = RGB(0, 100, 0);     // 暗绿色墙壁
+    colorEmpty = RGB(0, 0, 0);      // 黑色背景
+    colorDot = RGB(255, 255, 0);    // 黄色豆子
+    colorPacman = RGB(255, 165, 0); // 橙色吃豆人
+    colorMonster = RGB(255, 0, 0);  // 红色怪物
 
     initDoubleBuffer();
 }
 
-Renderer::~Renderer() {
-    cleanupDoubleBuffer();
-}
+Renderer::~Renderer() { cleanupDoubleBuffer(); }
 
 void Renderer::initDoubleBuffer() {
     HDC hdc = GetDC(hwnd);
@@ -55,7 +52,7 @@ void Renderer::clear() {
     DeleteObject(hBrush);
 }
 
-void Renderer::render(const GameStateManager& gameState) {
+void Renderer::render(const GameStateManager &gameState) {
     clear();
 
     // 渲染地图
@@ -83,7 +80,7 @@ void Renderer::resize(int width, int height) {
     initDoubleBuffer();
 }
 
-void Renderer::renderMap(const GameMap& map) {
+void Renderer::renderMap(const GameMap &map) {
     int cellSize = GameConfig::CELL_SIZE;
 
     for (int y = 0; y < map.getHeight(); ++y) {
@@ -104,8 +101,8 @@ void Renderer::renderMap(const GameMap& map) {
     }
 }
 
-void Renderer::renderCharacters(const std::vector<Character>& characters) {
-    for (const auto& character : characters) {
+void Renderer::renderCharacters(const std::vector<Character> &characters) {
+    for (const auto &character : characters) {
         COLORREF color = (character.type == CharacterType::PACMAN) ? colorPacman : colorMonster;
         renderCell(character.position.x, character.position.y, color);
     }
@@ -113,7 +110,7 @@ void Renderer::renderCharacters(const std::vector<Character>& characters) {
 
 void Renderer::renderCell(int x, int y, COLORREF color) {
     int cellSize = GameConfig::CELL_SIZE;
-    int margin = 2;  // 单元格之间的间距
+    int margin = 2; // 单元格之间的间距
 
     RECT rect;
     rect.left = x * cellSize + margin;
@@ -126,7 +123,7 @@ void Renderer::renderCell(int x, int y, COLORREF color) {
     DeleteObject(hBrush);
 }
 
-void Renderer::renderInfo(const GameStateManager& gameState) {
+void Renderer::renderInfo(const GameStateManager &gameState) {
     int cellSize = GameConfig::CELL_SIZE;
     int mapHeight = gameState.getMap().getHeight();
     int infoY = mapHeight * cellSize + 10;

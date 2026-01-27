@@ -1,6 +1,6 @@
 #include "../../include/management_system.h"
 
-bool ManagementSystem::processActions(const std::vector<Action>& actions, GameStateManager& gameState) {
+bool ManagementSystem::processActions(const std::vector<Action> &actions, GameStateManager &gameState) {
     auto characters = gameState.getCharacters();
 
     // 确保行动数量与角色数量匹配
@@ -23,7 +23,7 @@ bool ManagementSystem::processActions(const std::vector<Action>& actions, GameSt
     gameState.setCharacters(characters);
 
     // 第二步：豆子判定 - 检查吃豆人是否吃到豆子
-    for (const auto& character : characters) {
+    for (const auto &character : characters) {
         if (character.type == CharacterType::PACMAN) {
             // 检查是否吃到豆子
             if (gameState.getMap().hasDot(character.position)) {

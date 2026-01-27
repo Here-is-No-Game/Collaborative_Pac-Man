@@ -1,8 +1,7 @@
 #include "../../include/turn_based_game_loop.h"
 
-TurnBasedGameLoop::TurnBasedGameLoop(const GameMap& map, const std::vector<Character>& characters)
-    : gameState(map, characters), visibilitySystem(GameConfig::VISIBILITY_RADIUS),
-      isRunning(false), currentTurn(0) {
+TurnBasedGameLoop::TurnBasedGameLoop(const GameMap &map, const std::vector<Character> &characters)
+    : gameState(map, characters), visibilitySystem(GameConfig::VISIBILITY_RADIUS), isRunning(false), currentTurn(0) {
 
     // 为每个角色初始化AI代理槽位
     aiAgents.resize(characters.size());
@@ -23,17 +22,15 @@ void TurnBasedGameLoop::start() {
     currentTurn = 0;
 }
 
-void TurnBasedGameLoop::stop() {
-    isRunning = false;
-}
+void TurnBasedGameLoop::stop() { isRunning = false; }
 
 bool TurnBasedGameLoop::executeTurn() {
     if (!isRunning || controlSystem.getPaused()) {
-        return true;  // 游戏暂停或未运行，但不结束
+        return true; // 游戏暂停或未运行，但不结束
     }
 
     if (!managementSystem) {
-        return false;  // 没有管理系统，无法继续
+        return false; // 没有管理系统，无法继续
     }
 
     // 记录当前状态（用于回放）
@@ -55,19 +52,16 @@ bool TurnBasedGameLoop::executeTurn() {
 
 std::vector<Action> TurnBasedGameLoop::collectAIActions() {
     std::vector<Action> actions;
-    const auto& characters = gameState.getCharacters();
+    const auto &characters = gameState.getCharacters();
 
     for (size_t i = 0; i < characters.size(); ++i) {
-        Action action{Direction::STAY};  // 默认行动
+        Action action{Direction::STAY}; // 默认行动
 
         // 如果有对应的AI代理，获取其决策
         if (i < aiAgents.size() && aiAgents[i]) {
             // 计算可见区域
-            VisibleArea visibleArea = visibilitySystem.calculateVisibleArea(
-                characters[i].position,
-                gameState.getMap(),
-                characters
-            );
+            VisibleArea visibleArea =
+                visibilitySystem.calculateVisibleArea(characters[i].position, gameState.getMap(), characters);
 
             // 获取AI决策
             action = aiAgents[i]->getAction(characters[i], visibleArea);
