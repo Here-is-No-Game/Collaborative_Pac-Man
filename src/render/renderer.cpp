@@ -5,12 +5,12 @@
 Renderer::Renderer(HWND window, int width, int height)
     : hwnd(window), hdcMem(nullptr), hbmMem(nullptr), hbmOld(nullptr), windowWidth(width), windowHeight(height) {
 
-    // 定义颜色
-    colorWall = RGB(0, 100, 0);     // 暗绿色墙壁
-    colorEmpty = RGB(0, 0, 0);      // 黑色背景
-    colorDot = RGB(255, 255, 0);    // 黄色豆子
-    colorPacman = RGB(255, 165, 0); // 橙色吃豆人
-    colorMonster = RGB(255, 0, 0);  // 红色怪物
+    // 从配置文件加载颜色
+    colorWall = GameConfig::COLOR_WALL;
+    colorEmpty = GameConfig::COLOR_EMPTY;
+    colorDot = GameConfig::COLOR_DOT;
+    colorPacman = GameConfig::COLOR_PACMAN;
+    colorMonster = GameConfig::COLOR_MONSTER;
 
     initDoubleBuffer();
 }
