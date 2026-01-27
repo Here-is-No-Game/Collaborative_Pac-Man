@@ -15,19 +15,19 @@ VisibleArea VisibilitySystem::calculateVisibleArea(const Position &center, const
 
             // 检查曼哈顿距离
             if (manhattanDistance(center, targetPos) > visibilityRadius) {
-                visibleArea.setCell(dx + visibilityRadius, dy + visibilityRadius, VisibleArea::CellContent::WALL);
+                visibleArea.setCell(dx + visibilityRadius, dy + visibilityRadius, VisibleArea::CellContent::UNKNOWN);
                 continue;
             }
 
             // 检查是否在地图范围内
             if (!map.isInBounds(targetPos)) {
-                visibleArea.setCell(dx + visibilityRadius, dy + visibilityRadius, VisibleArea::CellContent::WALL);
+                visibleArea.setCell(dx + visibilityRadius, dy + visibilityRadius, VisibleArea::CellContent::OVERBOUND);
                 continue;
             }
 
             // 检查视线是否被阻挡
             if (!isVisible(center, targetPos, map)) {
-                visibleArea.setCell(dx + visibilityRadius, dy + visibilityRadius, VisibleArea::CellContent::WALL);
+                visibleArea.setCell(dx + visibilityRadius, dy + visibilityRadius, VisibleArea::CellContent::UNKNOWN);
                 continue;
             }
 
@@ -67,6 +67,10 @@ bool VisibilitySystem::isVisible(const Position &from, const Position &to, const
             }
         }
 
+        // 记录移动前的位置
+        int prev_x = x;
+        int prev_y = y;
+
         int e2 = 2 * err;
         if (e2 > -dy) {
             err -= dy;
@@ -75,6 +79,18 @@ bool VisibilitySystem::isVisible(const Position &from, const Position &to, const
         if (e2 < dx) {
             err += dx;
             y += sy;
+        }
+
+        // 如果是对角移动，检查两个相邻格子是否有墙
+        if (x != prev_x && y != prev_y) {
+            // 检查对角移动路径上的两个相邻格子
+            Position adjacent1(x, prev_y);
+            Position adjacent2(prev_x, y);
+
+            // 如果任一相邻格子是墙，视线被阻挡
+            if (map.isWall(adjacent1) || map.isWall(adjacent2)) {
+                return false;
+            }
         }
     }
 }

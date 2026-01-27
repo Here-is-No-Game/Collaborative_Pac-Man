@@ -6,7 +6,7 @@
 // VisibleArea 类
 class VisibleArea {
   public:
-    enum class CellContent { EMPTY, WALL, DOT, PACMAN, MONSTER };
+    enum class CellContent { EMPTY, WALL, DOT, PACMAN, MONSTER, UNKNOWN, OVERBOUND };
 
   private:
     std::vector<std::vector<CellContent>> grid;
