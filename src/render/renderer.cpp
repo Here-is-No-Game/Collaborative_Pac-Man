@@ -81,7 +81,6 @@ void Renderer::resize(int width, int height) {
 }
 
 void Renderer::renderMap(const GameMap &map) {
-    int cellSize = GameConfig::CELL_SIZE;
 
     for (int y = 0; y < map.getHeight(); ++y) {
         for (int x = 0; x < map.getWidth(); ++x) {
@@ -106,7 +105,7 @@ void Renderer::renderCharacters(const std::vector<Character> &characters) {
 
 void Renderer::renderCell(int x, int y, COLORREF color) {
     int cellSize = GameConfig::CELL_SIZE;
-    int margin = 2; // 单元格之间的间距
+    int margin = GameConfig::CELL_MARGIN;
 
     RECT rect;
     rect.left = x * cellSize + margin;

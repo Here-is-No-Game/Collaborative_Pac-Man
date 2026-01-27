@@ -21,6 +21,7 @@ constexpr int DOTS_TO_WIN = 100;
 constexpr int CELL_SIZE = 32;  // 像素
 constexpr int FRAME_RATE = 60; // 帧/秒
 constexpr int DOT_RADIUS = 4;  // 豆子圆点半径（像素）
+constexpr int CELL_MARGIN = 2; // 单元格之间的间距（像素）
 
 // 颜色配置 (注意：Windows使用BGR字节序，格式为0x00BBGGRR)
 constexpr unsigned long COLOR_WALL = 0x00006400;    // 暗绿色墙壁 RGB(0, 100, 0)
