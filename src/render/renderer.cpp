@@ -86,16 +86,12 @@ void Renderer::renderMap(const GameMap &map) {
     for (int y = 0; y < map.getHeight(); ++y) {
         for (int x = 0; x < map.getWidth(); ++x) {
             Position pos(x, y);
-            COLORREF color = colorEmpty;
 
             if (map.isWall(pos)) {
-                color = colorWall;
+                renderCell(x, y, colorWall);
             } else if (map.hasDot(pos)) {
-                color = colorDot;
-            }
-
-            if (color != colorEmpty) {
-                renderCell(x, y, color);
+                // 渲染白色小圆点
+                renderDot(x, y);
             }
         }
     }
@@ -121,6 +117,25 @@ void Renderer::renderCell(int x, int y, COLORREF color) {
     HBRUSH hBrush = CreateSolidBrush(color);
     FillRect(hdcMem, &rect, hBrush);
     DeleteObject(hBrush);
+}
+
+void Renderer::renderDot(int x, int y) {
+    int cellSize = GameConfig::CELL_SIZE;
+    int centerX = x * cellSize + cellSize / 2;
+    int centerY = y * cellSize + cellSize / 2;
+    int radius = GameConfig::DOT_RADIUS;
+
+    HBRUSH hBrush = CreateSolidBrush(colorDot);
+    HPEN hPen = CreatePen(PS_SOLID, 1, colorDot);
+    HBRUSH hOldBrush = (HBRUSH)SelectObject(hdcMem, hBrush);
+    HPEN hOldPen = (HPEN)SelectObject(hdcMem, hPen);
+
+    Ellipse(hdcMem, centerX - radius, centerY - radius, centerX + radius, centerY + radius);
+
+    SelectObject(hdcMem, hOldBrush);
+    SelectObject(hdcMem, hOldPen);
+    DeleteObject(hBrush);
+    DeleteObject(hPen);
 }
 
 void Renderer::renderInfo(const GameStateManager &gameState) {

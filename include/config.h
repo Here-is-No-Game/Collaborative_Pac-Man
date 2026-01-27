@@ -20,13 +20,14 @@ constexpr int DOTS_TO_WIN = 100;
 // 渲染配置
 constexpr int CELL_SIZE = 32;  // 像素
 constexpr int FRAME_RATE = 60; // 帧/秒
+constexpr int DOT_RADIUS = 4;  // 豆子圆点半径（像素）
 
-// 颜色配置 (RGB)
-constexpr unsigned long COLOR_WALL = 0x00006400;     // 暗绿色墙壁 RGB(0, 100, 0)
-constexpr unsigned long COLOR_EMPTY = 0x00000000;    // 黑色背景 RGB(0, 0, 0)
-constexpr unsigned long COLOR_DOT = 0x00FFFF00;      // 黄色豆子 RGB(255, 255, 0)
-constexpr unsigned long COLOR_PACMAN = 0x00FFA500;   // 橙色吃豆人 RGB(255, 165, 0)
-constexpr unsigned long COLOR_MONSTER = 0x00FF0000;  // 红色怪物 RGB(255, 0, 0)
+// 颜色配置 (注意：Windows使用BGR字节序，格式为0x00BBGGRR)
+constexpr unsigned long COLOR_WALL = 0x00006400;    // 暗绿色墙壁 RGB(0, 100, 0)
+constexpr unsigned long COLOR_EMPTY = 0x00000000;   // 黑色背景 RGB(0, 0, 0)
+constexpr unsigned long COLOR_DOT = 0x00FFFFFF;     // 白色豆子 RGB(255, 255, 255)
+constexpr unsigned long COLOR_PACMAN = 0x0003EEEC;  // 亮黄色吃豆人 RGB(236, 238, 3)
+constexpr unsigned long COLOR_MONSTER = 0x000000FF; // 红色怪物 RGB(255, 0, 0)
 
 // AI 配置
 constexpr int AI_THINK_TIME_MS = 100; // AI 决策时间限制（毫秒）

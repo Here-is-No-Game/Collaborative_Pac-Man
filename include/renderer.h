@@ -53,6 +53,9 @@ class Renderer {
     // 渲染单个单元格
     void renderCell(int x, int y, COLORREF color);
 
+    // 渲染豆子（小圆点）
+    void renderDot(int x, int y);
+
     // 渲染文本信息
     void renderInfo(const GameStateManager &gameState);
 };
