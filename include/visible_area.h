@@ -3,6 +3,9 @@
 #include "game_types.h"
 #include <vector>
 
+// 前向声明
+class VisibilitySystem;
+
 // VisibleArea 类
 class VisibleArea {
   public:
@@ -14,11 +17,15 @@ class VisibleArea {
     int height;
     Position centerPosition;
 
+    // 只允许 VisibilitySystem 修改视野内容
+    friend class VisibilitySystem;
+    void setCell(int x, int y, CellContent content);
+
   public:
     VisibleArea(int w, int h);
 
+    // AI 只能读取视野，不能修改
     CellContent getCell(int x, int y) const;
     int getWidth() const { return width; }
     int getHeight() const { return height; }
-    void setCell(int x, int y, CellContent content);
 };

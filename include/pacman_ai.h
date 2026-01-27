@@ -2,12 +2,22 @@
 
 #include "ai_interface.h"
 #include <random>
+#include <vector>
 
 // 简单的吃豆人AI - 随机移动示例
 // 这是给学生A的参考实现，学生可以在此基础上改进策略
 class PacmanAI : public AIInterface {
   private:
     std::mt19937 randomEngine;
+
+    // 辅助方法：获取所有有效的移动方向（不会撞墙）
+    std::vector<Direction> getValidMoves(const VisibleArea &visibleArea) const;
+
+    // 辅助方法：检查某个方向是否可以移动
+    bool canMove(const VisibleArea &visibleArea, Direction dir) const;
+
+    // 辅助方法：获取方向的偏移量
+    void getDirectionOffset(Direction dir, int &dx, int &dy) const;
 
   public:
     PacmanAI();
