@@ -1,4 +1,4 @@
-#include "../include/random_map_generator.h"
+#include "../../include/random_map_generator.h"
 #include <ctime>
 #include <algorithm>
 

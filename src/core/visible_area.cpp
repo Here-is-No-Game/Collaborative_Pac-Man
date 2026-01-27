@@ -1,4 +1,4 @@
-#include "../include/visible_area.h"
+#include "../../include/visible_area.h"
 
 VisibleArea::VisibleArea(int w, int h)
     : width(w), height(h), centerPosition(w / 2, h / 2) {

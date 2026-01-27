@@ -1,4 +1,4 @@
-#include "../include/game_state_manager.h"
+#include "../../include/game_state_manager.h"
 
 GameStateManager::GameStateManager()
     : score(0), remainingDots(0), turnCount(1) {

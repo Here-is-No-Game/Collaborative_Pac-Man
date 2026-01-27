@@ -1,4 +1,4 @@
-#include "../include/game_map.h"
+#include "../../include/game_map.h"
 #include <fstream>
 #include <sstream>
 

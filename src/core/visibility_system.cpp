@@ -1,4 +1,4 @@
-#include "../include/visibility_system.h"
+#include "../../include/visibility_system.h"
 #include <cmath>
 
 VisibilitySystem::VisibilitySystem(int radius)
