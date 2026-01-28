@@ -33,9 +33,6 @@ bool TurnBasedGameLoop::executeTurn() {
         return false; // 没有管理系统，无法继续
     }
 
-    // 记录当前状态（用于回放）
-    controlSystem.recordState(gameState);
-
     // 第一步：收集所有AI的决策
     std::vector<Action> actions = collectAIActions();
 
@@ -45,6 +42,9 @@ bool TurnBasedGameLoop::executeTurn() {
     // 第三步：更新回合数
     currentTurn++;
     gameState.incrementTurnCount();
+
+    // 记录执行后的状态（用于回放）
+    controlSystem.recordState(gameState);
 
     // 返回游戏是否继续
     return continueGame;
@@ -72,3 +72,5 @@ std::vector<Action> TurnBasedGameLoop::collectAIActions() {
 
     return actions;
 }
+
+void TurnBasedGameLoop::setGameState(const GameStateManager &state) { gameState = state; }

@@ -48,6 +48,9 @@ class TurnBasedGameLoop {
     // 获取当前回合数
     int getCurrentTurn() const { return currentTurn; }
 
+    // 回放控制
+    void setGameState(const GameStateManager &state);
+
   private:
     // 收集所有AI的决策
     std::vector<Action> collectAIActions();

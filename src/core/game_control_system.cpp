@@ -142,3 +142,33 @@ void GameControlSystem::reset() {
     isPaused = false;
     clearHistory();
 }
+
+bool GameControlSystem::canStepBackward() const { return currentHistoryIndex > 0; }
+
+bool GameControlSystem::canStepForward() const { return currentHistoryIndex < static_cast<int>(stateHistory.size()) - 1; }
+
+GameStateManager GameControlSystem::stepBackward() {
+    if (canStepBackward()) {
+        currentHistoryIndex--;
+        return stateHistory[currentHistoryIndex];
+    }
+    return stateHistory[currentHistoryIndex];
+}
+
+GameStateManager GameControlSystem::stepForward() {
+    if (canStepForward()) {
+        currentHistoryIndex++;
+        return stateHistory[currentHistoryIndex];
+    }
+    return stateHistory[currentHistoryIndex];
+}
+
+GameStateManager GameControlSystem::restartFromBeginning() {
+    if (!stateHistory.empty()) {
+        currentHistoryIndex = 0;
+        return stateHistory[0];
+    }
+    return stateHistory[currentHistoryIndex];
+}
+
+bool GameControlSystem::hasHistory() const { return !stateHistory.empty(); }
