@@ -29,10 +29,12 @@ bool GameControlSystem::saveGame(const GameStateManager &gameState, const std::s
     file.write(mapData.c_str(), mapSize);
 
     // 保存其他状态数据
-    int score = gameState.getScore();
+    int pacmanScore = gameState.getPacmanScore();
+    int monsterScore = gameState.getMonsterScore();
     int remainingDots = gameState.getRemainingDots();
 
-    file.write(reinterpret_cast<const char *>(&score), sizeof(score));
+    file.write(reinterpret_cast<const char *>(&pacmanScore), sizeof(pacmanScore));
+    file.write(reinterpret_cast<const char *>(&monsterScore), sizeof(monsterScore));
     file.write(reinterpret_cast<const char *>(&remainingDots), sizeof(remainingDots));
 
     // 保存角色数据
@@ -70,8 +72,9 @@ bool GameControlSystem::loadGame(GameStateManager &gameState, const std::string 
     }
 
     // 读取其他状态数据
-    int score, remainingDots;
-    file.read(reinterpret_cast<char *>(&score), sizeof(score));
+    int pacmanScore, monsterScore, remainingDots;
+    file.read(reinterpret_cast<char *>(&pacmanScore), sizeof(pacmanScore));
+    file.read(reinterpret_cast<char *>(&monsterScore), sizeof(monsterScore));
     file.read(reinterpret_cast<char *>(&remainingDots), sizeof(remainingDots));
 
     // 读取角色数据
@@ -87,7 +90,8 @@ bool GameControlSystem::loadGame(GameStateManager &gameState, const std::string 
 
     // 更新游戏状态
     gameState = GameStateManager(map, characters);
-    gameState.setScore(score);
+    gameState.setPacmanScore(pacmanScore);
+    gameState.setMonsterScore(monsterScore);
 
     return true;
 }

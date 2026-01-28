@@ -146,18 +146,23 @@ void Renderer::renderInfo(const GameStateManager &gameState) {
     SetTextColor(hdcMem, RGB(255, 255, 255));
     SetBkColor(hdcMem, RGB(0, 0, 0));
 
-    // 显示分数
-    std::string scoreText = "Score: " + std::to_string(gameState.getScore());
-    std::wstring wScoreText = Utf8ToWide(scoreText);
-    TextOutW(hdcMem, 10, infoY, wScoreText.c_str(), static_cast<int>(wScoreText.length()));
+    // 显示吃豆人分数
+    std::string pacmanScoreText = "Pacman: " + std::to_string(gameState.getPacmanScore());
+    std::wstring wPacmanScoreText = Utf8ToWide(pacmanScoreText);
+    TextOutW(hdcMem, 10, infoY, wPacmanScoreText.c_str(), static_cast<int>(wPacmanScoreText.length()));
+
+    // 显示怪物分数
+    std::string monsterScoreText = "Monster: " + std::to_string(gameState.getMonsterScore());
+    std::wstring wMonsterScoreText = Utf8ToWide(monsterScoreText);
+    TextOutW(hdcMem, 120, infoY, wMonsterScoreText.c_str(), static_cast<int>(wMonsterScoreText.length()));
 
     // 显示剩余豆子
     std::string dotsText = "Dots: " + std::to_string(gameState.getRemainingDots());
     std::wstring wDotsText = Utf8ToWide(dotsText);
-    TextOutW(hdcMem, 150, infoY, wDotsText.c_str(), static_cast<int>(wDotsText.length()));
+    TextOutW(hdcMem, 250, infoY, wDotsText.c_str(), static_cast<int>(wDotsText.length()));
 
     // 显示回合数
     std::string turnText = "Turn: " + std::to_string(gameState.getTurnCount());
     std::wstring wTurnText = Utf8ToWide(turnText);
-    TextOutW(hdcMem, 280, infoY, wTurnText.c_str(), static_cast<int>(wTurnText.length()));
+    TextOutW(hdcMem, 340, infoY, wTurnText.c_str(), static_cast<int>(wTurnText.length()));
 }

@@ -215,9 +215,9 @@ void UpdateGame() {
                 std::string message;
 
                 if (gameState.getRemainingDots() == 0) {
-                    message = "You Win! Score: " + std::to_string(gameState.getScore());
+                    message = "You Win!";
                 } else {
-                    message = "Game Over! Score: " + std::to_string(gameState.getScore());
+                    message = "Game Over!";
                 }
 
                 std::wstring wMessage = Utf8ToWide(message);

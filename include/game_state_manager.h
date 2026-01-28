@@ -8,18 +8,20 @@
 struct GameState {
     GameMap map;
     std::vector<Character> characters;
-    int score;
+    int pacmanScore;
+    int monsterScore;
     int remainingDots;
     int turnCount;
 
-    GameState() : score(0), remainingDots(0), turnCount(1) {}
+    GameState() : pacmanScore(0), monsterScore(0), remainingDots(0), turnCount(1) {}
 };
 
 class GameStateManager {
   private:
     GameMap map;
     std::vector<Character> characters;
-    int score;
+    int pacmanScore;
+    int monsterScore;
     int remainingDots;
     int turnCount;
 
@@ -37,7 +39,8 @@ class GameStateManager {
     const Character &getCharacter(int index) const;
     const Character &getPacman() const;
     std::vector<Character> getMonsters() const;
-    int getScore() const { return score; }
+    int getPacmanScore() const { return pacmanScore; }
+    int getMonsterScore() const { return monsterScore; }
     int getRemainingDots() const { return remainingDots; }
     int getTurnCount() const { return turnCount; }
 
@@ -46,9 +49,11 @@ class GameStateManager {
     void consumeDot(const Position &pos);
     void setCharacterAlive(int index, bool alive);
     void incrementTurnCount();
-    void incrementScore(int points);
+    void incrementPacmanScore(int points);
+    void incrementMonsterScore(int points);
     void setCharacters(const std::vector<Character> &chars);
-    void setScore(int newScore);
+    void setPacmanScore(int newScore);
+    void setMonsterScore(int newScore);
 
     // 状态查询方法
     CellType getCellType(const Position &pos) const;

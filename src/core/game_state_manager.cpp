@@ -1,16 +1,17 @@
 #include "../../include/game_state_manager.h"
 
-GameStateManager::GameStateManager() : score(0), remainingDots(0), turnCount(1) {}
+GameStateManager::GameStateManager() : pacmanScore(0), monsterScore(0), remainingDots(0), turnCount(1) {}
 
 GameStateManager::GameStateManager(const GameMap &gameMap, const std::vector<Character> &chars)
-    : map(gameMap), characters(chars), score(0), remainingDots(0), turnCount(1) {
+    : map(gameMap), characters(chars), pacmanScore(0), monsterScore(0), remainingDots(0), turnCount(1) {
     remainingDots = map.countDots();
 }
 
 void GameStateManager::initializeGame(const GameMap &gameMap, const std::vector<Character> &chars) {
     map = gameMap;
     characters = chars;
-    score = 0;
+    pacmanScore = 0;
+    monsterScore = 0;
     turnCount = 1;
     remainingDots = map.countDots();
 }
@@ -53,7 +54,7 @@ void GameStateManager::consumeDot(const Position &pos) {
     if (map.hasDot(pos)) {
         map.setCell(pos, CellType::EMPTY);
         remainingDots--;
-        incrementScore(GameConfig::POINTS_PER_DOT);
+        // 不再自动加分，由管理系统决定记分规则
     }
 }
 
@@ -65,7 +66,9 @@ void GameStateManager::setCharacterAlive(int index, bool alive) {
 
 void GameStateManager::incrementTurnCount() { turnCount++; }
 
-void GameStateManager::incrementScore(int points) { score += points; }
+void GameStateManager::incrementPacmanScore(int points) { pacmanScore += points; }
+
+void GameStateManager::incrementMonsterScore(int points) { monsterScore += points; }
 
 CellType GameStateManager::getCellType(const Position &pos) const { return map.getCell(pos); }
 
@@ -101,7 +104,8 @@ GameState GameStateManager::getCurrentState() const {
     GameState state;
     state.map = map;
     state.characters = characters;
-    state.score = score;
+    state.pacmanScore = pacmanScore;
+    state.monsterScore = monsterScore;
     state.remainingDots = remainingDots;
     state.turnCount = turnCount;
     return state;
@@ -110,11 +114,14 @@ GameState GameStateManager::getCurrentState() const {
 void GameStateManager::restoreState(const GameState &state) {
     map = state.map;
     characters = state.characters;
-    score = state.score;
+    pacmanScore = state.pacmanScore;
+    monsterScore = state.monsterScore;
     remainingDots = state.remainingDots;
     turnCount = state.turnCount;
 }
 
 void GameStateManager::setCharacters(const std::vector<Character> &chars) { characters = chars; }
 
-void GameStateManager::setScore(int newScore) { score = newScore; }
+void GameStateManager::setPacmanScore(int newScore) { pacmanScore = newScore; }
+
+void GameStateManager::setMonsterScore(int newScore) { monsterScore = newScore; }
