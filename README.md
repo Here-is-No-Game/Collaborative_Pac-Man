@@ -184,13 +184,6 @@ cmake --build build
 
 本项目由 HING 小组成员共同开发，作为教学框架供学习使用。
 
----
 
-## CI/CD 测试
-
-本项目使用 GitHub Actions 进行自动化构建和代码格式化：
-- ✅ 自动编译测试（Windows MSVC）
-- ✅ 自动代码格式化（clang-format）
-- ✅ Fork 仓库无需 approval 即可运行
 
 **祝学习愉快！🎮**
