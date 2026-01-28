@@ -45,18 +45,20 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     RegisterClassW(&wc);
 
-    // 计算客户区大小
-    int clientWidth = GameConfig::MAP_WIDTH * GameConfig::CELL_SIZE;
-    int clientHeight = GameConfig::MAP_HEIGHT * GameConfig::CELL_SIZE + 50; // 额外空间显示信息
+    // 计算客户区大小（左右各增加20像素边距）
+    int horizontalMargin = 40; // 左右各20像素
+    int clientWidth = GameConfig::MAP_WIDTH * GameConfig::CELL_SIZE + horizontalMargin;
+    int clientHeight = GameConfig::MAP_HEIGHT * GameConfig::CELL_SIZE + 60 + 50; // 60像素标题区域 + 50像素信息区域
 
     // 计算窗口大小（包含边框和标题栏）
     RECT rect = {0, 0, clientWidth, clientHeight};
-    AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
+    DWORD windowStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX; // 不可拉伸的窗口样式
+    AdjustWindowRect(&rect, windowStyle, FALSE);
     int windowWidth = rect.right - rect.left;
     int windowHeight = rect.bottom - rect.top;
 
     // 创建窗口
-    g_hwnd = CreateWindowExW(0, CLASS_NAME, L"Collaborative Pac-Man", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+    g_hwnd = CreateWindowExW(0, CLASS_NAME, L"Collaborative Pac-Man", windowStyle, CW_USEDEFAULT, CW_USEDEFAULT,
                              windowWidth, windowHeight, nullptr, nullptr, hInstance, nullptr);
 
     if (g_hwnd == nullptr) {
@@ -100,7 +102,48 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
         case VK_SPACE:
             // 暂停/恢复
             if (gameLoop) {
-                gameLoop->getControlSystem().togglePause();
+                auto &controlSystem = gameLoop->getControlSystem();
+                if (controlSystem.getPaused()) {
+                    // 如果当前是暂停状态，恢复游戏
+                    controlSystem.resume();
+                } else {
+                    // 如果当前是运行状态，暂停游戏
+                    controlSystem.pause();
+                }
+            }
+            break;
+        case VK_LEFT:
+            // 左箭头：后退一回合
+            if (gameLoop) {
+                auto &controlSystem = gameLoop->getControlSystem();
+                if (controlSystem.canStepBackward()) {
+                    GameStateManager previousState = controlSystem.stepBackward();
+                    gameLoop->setGameState(previousState);
+                    // stepBackward已经设置了状态，不需要再调用pause
+                }
+            }
+            break;
+        case VK_RIGHT:
+            // 右箭头：前进一回合
+            if (gameLoop) {
+                auto &controlSystem = gameLoop->getControlSystem();
+                if (controlSystem.canStepForward()) {
+                    GameStateManager nextState = controlSystem.stepForward();
+                    gameLoop->setGameState(nextState);
+                    // stepForward已经设置了状态，不需要再调用pause
+                }
+            }
+            break;
+        case 'R':
+            // R键：从第一回合重新开始
+            if (gameLoop) {
+                auto &controlSystem = gameLoop->getControlSystem();
+                if (controlSystem.hasHistory()) {
+                    GameStateManager firstState = controlSystem.restartFromBeginning();
+                    gameLoop->setGameState(firstState);
+                    // 恢复游戏运行
+                    controlSystem.resume();
+                }
             }
             break;
         case VK_ESCAPE:
@@ -188,9 +231,13 @@ void InitializeGame(HWND hwnd) {
     // 启动游戏
     gameLoop->start();
 
+    // 记录初始状态（第0回合）
+    gameLoop->getControlSystem().recordState(gameLoop->getGameState());
+
     // 创建渲染器
-    int windowWidth = GameConfig::MAP_WIDTH * GameConfig::CELL_SIZE;
-    int windowHeight = GameConfig::MAP_HEIGHT * GameConfig::CELL_SIZE + 50;
+    int horizontalMargin = 40; // 左右各20像素
+    int windowWidth = GameConfig::MAP_WIDTH * GameConfig::CELL_SIZE + horizontalMargin;
+    int windowHeight = GameConfig::MAP_HEIGHT * GameConfig::CELL_SIZE + 60 + 50; // 60像素标题区域 + 50像素信息区域
     renderer = std::make_unique<Renderer>(hwnd, windowWidth, windowHeight);
 }
 
@@ -230,7 +277,7 @@ void UpdateGame() {
 
 void RenderGame() {
     if (renderer && gameLoop) {
-        renderer->render(gameLoop->getGameState());
+        renderer->render(gameLoop->getGameState(), gameLoop->getControlSystem());
         renderer->present();
     }
 }

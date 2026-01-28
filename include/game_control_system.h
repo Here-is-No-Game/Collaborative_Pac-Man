@@ -6,8 +6,17 @@
 
 // 游戏控制系统 - 处理暂停、保存、加载、回放等功能
 class GameControlSystem {
+  public:
+    enum class PlaybackStatus {
+        PLAYING,   // 正在运行
+        PAUSED,    // 暂停
+        STEPPED_BACKWARD, // 刚刚后退一步
+        STEPPED_FORWARD   // 刚刚前进一步
+    };
+
   private:
     bool isPaused;
+    PlaybackStatus playbackStatus;
     std::vector<GameStateManager> stateHistory; // 状态历史记录
     int currentHistoryIndex;
     int maxHistorySize;
@@ -21,6 +30,7 @@ class GameControlSystem {
     void resume();
     bool getPaused() const { return isPaused; }
     void togglePause();
+    PlaybackStatus getPlaybackStatus() const { return playbackStatus; }
 
     // 状态保存/加载
     bool saveGame(const GameStateManager &gameState, const std::string &filename) const;

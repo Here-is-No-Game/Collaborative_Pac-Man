@@ -1,14 +1,20 @@
 #include "../../include/game_control_system.h"
 #include <fstream>
 
-GameControlSystem::GameControlSystem() : isPaused(false), currentHistoryIndex(-1), maxHistorySize(100) {}
+GameControlSystem::GameControlSystem() : isPaused(false), playbackStatus(PlaybackStatus::PLAYING), currentHistoryIndex(-1), maxHistorySize(100) {}
 
 GameControlSystem::GameControlSystem(int maxHistory)
-    : isPaused(false), currentHistoryIndex(-1), maxHistorySize(maxHistory) {}
+    : isPaused(false), playbackStatus(PlaybackStatus::PLAYING), currentHistoryIndex(-1), maxHistorySize(maxHistory) {}
 
-void GameControlSystem::pause() { isPaused = true; }
+void GameControlSystem::pause() {
+    isPaused = true;
+    playbackStatus = PlaybackStatus::PAUSED;
+}
 
-void GameControlSystem::resume() { isPaused = false; }
+void GameControlSystem::resume() {
+    isPaused = false;
+    playbackStatus = PlaybackStatus::PLAYING;
+}
 
 void GameControlSystem::togglePause() { isPaused = !isPaused; }
 
@@ -150,6 +156,8 @@ bool GameControlSystem::canStepForward() const { return currentHistoryIndex < st
 GameStateManager GameControlSystem::stepBackward() {
     if (canStepBackward()) {
         currentHistoryIndex--;
+        isPaused = true; // 后退后保持暂停
+        playbackStatus = PlaybackStatus::STEPPED_BACKWARD;
         return stateHistory[currentHistoryIndex];
     }
     return stateHistory[currentHistoryIndex];
@@ -158,6 +166,8 @@ GameStateManager GameControlSystem::stepBackward() {
 GameStateManager GameControlSystem::stepForward() {
     if (canStepForward()) {
         currentHistoryIndex++;
+        isPaused = true; // 前进后保持暂停
+        playbackStatus = PlaybackStatus::STEPPED_FORWARD;
         return stateHistory[currentHistoryIndex];
     }
     return stateHistory[currentHistoryIndex];
@@ -166,6 +176,7 @@ GameStateManager GameControlSystem::stepForward() {
 GameStateManager GameControlSystem::restartFromBeginning() {
     if (!stateHistory.empty()) {
         currentHistoryIndex = 0;
+        playbackStatus = PlaybackStatus::PLAYING;
         return stateHistory[0];
     }
     return stateHistory[currentHistoryIndex];

@@ -4,6 +4,9 @@
 #include <string>
 #include <windows.h>
 
+// 前向声明
+class GameControlSystem;
+
 // 简单的GDI渲染器 - 使用双缓冲技术
 class Renderer {
   private:
@@ -26,7 +29,7 @@ class Renderer {
     ~Renderer();
 
     // 渲染游戏状态
-    void render(const GameStateManager &gameState);
+    void render(const GameStateManager &gameState, const GameControlSystem &controlSystem);
 
     // 清空屏幕
     void clear();
@@ -51,11 +54,14 @@ class Renderer {
     void renderCharacters(const std::vector<Character> &characters);
 
     // 渲染单个单元格
-    void renderCell(int x, int y, COLORREF color);
+    void renderCell(int x, int y, COLORREF color, int offsetY = 0, int offsetX = 0);
 
     // 渲染豆子（小圆点）
-    void renderDot(int x, int y);
+    void renderDot(int x, int y, int offsetY = 0, int offsetX = 0);
+
+    // 渲染标题
+    void renderTitle();
 
     // 渲染文本信息
-    void renderInfo(const GameStateManager &gameState);
+    void renderInfo(const GameStateManager &gameState, const GameControlSystem &controlSystem);
 };
