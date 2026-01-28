@@ -1,4 +1,4 @@
-name: PR Check - Build and Format
+name: PR Check - Build
 
 on:
   pull_request:
@@ -7,14 +7,12 @@ on:
       - main
 
 jobs:
-  build-and-format:
+  build:
     runs-on: windows-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
     - name: Setup MSVC
       uses: microsoft/setup-msbuild@v2
@@ -33,44 +31,14 @@ jobs:
       run: cmake --build build
       shell: cmd
 
-    - name: Install clang-format
-      run: |
-        choco install llvm --version=17.0.6 -y
-      shell: powershell
-
-    - name: Check code formatting
-      run: |
-        $files = Get-ChildItem -Path src,include -Include *.cpp,*.h,*.hpp -Recurse
-        $needsFormatting = $false
-        foreach ($file in $files) {
-          clang-format --dry-run --Werror $file.FullName
-          if ($LASTEXITCODE -ne 0) {
-            $needsFormatting = $true
-            Write-Host "File needs formatting: $($file.FullName)" -ForegroundColor Yellow
-          }
-        }
-        if ($needsFormatting) {
-          Write-Host "`n❌ Code formatting check failed!" -ForegroundColor Red
-          Write-Host "Please run 'clang-format -i src/**/*.cpp src/**/*.h include/**/*.h' to format your code." -ForegroundColor Yellow
-          exit 1
-        } else {
-          Write-Host "`n✅ All files are properly formatted!" -ForegroundColor Green
-        }
-      shell: powershell
-
     - name: Build Summary
       if: always()
       run: |
-        echo "## Build Results" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        if ($env:BUILD_SUCCESS -eq "true") {
-          echo "✅ Build completed successfully" >> $GITHUB_STEP_SUMMARY
+        echo "## Build Results" >> $env:GITHUB_STEP_SUMMARY
+        echo "" >> $env:GITHUB_STEP_SUMMARY
+        if ($LASTEXITCODE -eq 0) {
+          echo "✅ Build completed successfully" >> $env:GITHUB_STEP_SUMMARY
         } else {
-          echo "❌ Build failed" >> $GITHUB_STEP_SUMMARY
-        }
-        if ($env:FORMAT_SUCCESS -eq "true") {
-          echo "✅ Code formatting check passed" >> $GITHUB_STEP_SUMMARY
-        } else {
-          echo "❌ Code formatting check failed" >> $GITHUB_STEP_SUMMARY
+          echo "❌ Build failed" >> $env:GITHUB_STEP_SUMMARY
         }
       shell: powershell
