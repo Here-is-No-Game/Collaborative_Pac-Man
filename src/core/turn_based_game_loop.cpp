@@ -64,7 +64,7 @@ std::vector<Action> TurnBasedGameLoop::collectAIActions() {
                 visibilitySystem.calculateVisibleArea(characters[i].position, gameState.getMap(), characters);
 
             // 获取AI决策
-            action = aiAgents[i]->getAction(characters[i], visibleArea);
+            action = aiAgents[i]->getAction(visibleArea);
         }
 
         actions.push_back(action);

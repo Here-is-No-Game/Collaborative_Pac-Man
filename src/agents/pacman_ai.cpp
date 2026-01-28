@@ -5,7 +5,7 @@ PacmanAI::PacmanAI() { randomEngine.seed(static_cast<unsigned int>(std::time(nul
 
 PacmanAI::PacmanAI(unsigned int seed) { randomEngine.seed(seed); }
 
-Action PacmanAI::getAction(const Character &character, const VisibleArea &visibleArea) {
+Action PacmanAI::getAction(const VisibleArea &visibleArea) {
     // 获取所有有效的移动方向
     std::vector<Direction> validMoves = getValidMoves(visibleArea);
 

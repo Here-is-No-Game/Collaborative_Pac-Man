@@ -24,5 +24,5 @@ class MonsterAI : public AIInterface {
     explicit MonsterAI(unsigned int seed);
 
     // 实现AI决策：随机选择一个有效的移动方向
-    Action getAction(const Character &character, const VisibleArea &visibleArea) override;
+    Action getAction(const VisibleArea &visibleArea) override;
 };

@@ -11,9 +11,8 @@ class AIInterface {
   public:
     virtual ~AIInterface() = default;
 
-    // 核心方法：根据当前角色状态和可见区域返回行动决策
-    // character: 当前角色信息（位置、类型等）
-    // visibleArea: 当前可见区域（以角色为中心）
+    // 核心方法：根据可见区域返回行动决策
+    // visibleArea: 当前可见区域（以角色为中心的7x7网格）
     // 返回：Action对象，包含移动方向
-    virtual Action getAction(const Character &character, const VisibleArea &visibleArea) = 0;
+    virtual Action getAction(const VisibleArea &visibleArea) = 0;
 };
