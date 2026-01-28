@@ -1,7 +1,8 @@
 #include "../../include/turn_based_game_loop.h"
 
 TurnBasedGameLoop::TurnBasedGameLoop(const GameMap &map, const std::vector<Character> &characters)
-    : gameState(map, characters), visibilitySystem(GameConfig::VISIBILITY_RADIUS), isRunning(false), currentTurn(0) {
+    : gameState(map, characters), pacmanVisibilitySystem(GameConfig::PACMAN_VISIBILITY_RADIUS),
+      monsterVisibilitySystem(GameConfig::MONSTER_VISIBILITY_RADIUS), isRunning(false), currentTurn(0) {
 
     // 为每个角色初始化AI代理槽位
     aiAgents.resize(characters.size());
@@ -59,9 +60,14 @@ std::vector<Action> TurnBasedGameLoop::collectAIActions() {
 
         // 如果有对应的AI代理，获取其决策
         if (i < aiAgents.size() && aiAgents[i]) {
+            // 根据角色类型选择对应的视野系统
+            VisibilitySystem &visSystem = (characters[i].type == CharacterType::PACMAN)
+                                          ? pacmanVisibilitySystem
+                                          : monsterVisibilitySystem;
+
             // 计算可见区域
             VisibleArea visibleArea =
-                visibilitySystem.calculateVisibleArea(characters[i].position, gameState.getMap(), characters);
+                visSystem.calculateVisibleArea(characters[i].position, gameState.getMap(), characters);
 
             // 获取AI决策
             action = aiAgents[i]->getAction(visibleArea);

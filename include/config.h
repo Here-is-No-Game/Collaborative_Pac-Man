@@ -8,7 +8,8 @@ constexpr int MAP_WIDTH = 15;
 constexpr int MAP_HEIGHT = 15;
 
 // 可视范围配置
-constexpr int VISIBILITY_RADIUS = 3; // 必须为奇数
+constexpr int PACMAN_VISIBILITY_RADIUS = 4;  // 吃豆人视野半径
+constexpr int MONSTER_VISIBILITY_RADIUS = 3; // 怪物视野半径
 
 // 游戏角色配置
 constexpr int PACMAN_COUNT = 1;

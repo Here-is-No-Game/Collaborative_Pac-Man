@@ -13,7 +13,8 @@ class TurnBasedGameLoop {
   private:
     GameStateManager gameState;
     GameControlSystem controlSystem;
-    VisibilitySystem visibilitySystem;
+    VisibilitySystem pacmanVisibilitySystem;  // 吃豆人视野系统
+    VisibilitySystem monsterVisibilitySystem; // 怪物视野系统
 
     std::vector<std::unique_ptr<AIInterface>> aiAgents;
     std::unique_ptr<ManagementInterface> managementSystem;
