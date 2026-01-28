@@ -134,14 +134,14 @@ void InitializeGame(HWND hwnd) {
     for (int y = 1; y < map.getHeight() - 1; ++y) {
         for (int x = 1; x < map.getWidth() - 1; ++x) {
             Position pos(x, y);
-            if (map.isEmpty(pos) || map.hasDot(pos)) {
+            if (map.isEmpty(pos)) {
                 validPositions.push_back(pos);
             }
         }
     }
 
-    // 检查是否有足够的位置
-    int totalCharacters = GameConfig::PACMAN_COUNT + GameConfig::MONSTER_COUNT;
+    // 检查是否有足够的位置（1个吃豆人 + N个怪物）
+    int totalCharacters = 1 + GameConfig::MONSTER_COUNT;
     if (validPositions.size() < static_cast<size_t>(totalCharacters)) {
         std::wstring errorMsg = L"Not enough empty spaces on map. Found: " + std::to_wstring(validPositions.size()) +
                                 L", Required: " + std::to_wstring(totalCharacters);
@@ -158,20 +158,18 @@ void InitializeGame(HWND hwnd) {
     int posIndex = 0;
 
     // 创建吃豆人
-    for (int i = 0; i < GameConfig::PACMAN_COUNT; ++i) {
-        Character pacman;
-        pacman.type = CharacterType::PACMAN;
-        pacman.position = validPositions[posIndex++];
-        pacman.id = i;
-        characters.push_back(pacman);
-    }
+    Character pacman;
+    pacman.type = CharacterType::PACMAN;
+    pacman.position = validPositions[posIndex++];
+    pacman.id = 0;
+    characters.push_back(pacman);
 
     // 创建怪物
     for (int i = 0; i < GameConfig::MONSTER_COUNT; ++i) {
         Character monster;
         monster.type = CharacterType::MONSTER;
         monster.position = validPositions[posIndex++];
-        monster.id = GameConfig::PACMAN_COUNT + i;
+        monster.id = 1 + i;
         characters.push_back(monster);
     }
 
@@ -179,12 +177,9 @@ void InitializeGame(HWND hwnd) {
     gameLoop = std::make_unique<TurnBasedGameLoop>(map, characters);
 
     // 设置AI代理
-    for (size_t i = 0; i < characters.size(); ++i) {
-        if (characters[i].type == CharacterType::PACMAN) {
-            gameLoop->setAIAgent(i, std::make_unique<PacmanAI>());
-        } else {
-            gameLoop->setAIAgent(i, std::make_unique<MonsterAI>());
-        }
+    gameLoop->setAIAgent(0, std::make_unique<PacmanAI>());  // 吃豆人
+    for (int i = 0; i < GameConfig::MONSTER_COUNT; ++i) {
+        gameLoop->setAIAgent(1 + i, std::make_unique<MonsterAI>());  // 怪物
     }
 
     // 设置管理系统
