@@ -62,7 +62,7 @@
 
 ```bash
 # 克隆主仓库
-git clone git@github.com:HING-Team/Collaborative_Pac-Man.git
+git clone git@github.com:Here-is-No-Game/Collaborative_Pac-Man.git
 
 # 进入项目目录
 cd Collaborative_Pac-Man
@@ -73,8 +73,8 @@ cd Collaborative_Pac-Man
 ```bash
 # 查看远程仓库
 git remote -v
-# origin  git@github.com:HING-Team/Collaborative_Pac-Man.git (fetch)
-# origin  git@github.com:HING-Team/Collaborative_Pac-Man.git (push)
+# origin  git@github.com:Here-is-No-Game/Collaborative_Pac-Man.git (fetch)
+# origin  git@github.com:Here-is-No-Game/Collaborative_Pac-Man.git (push)
 ```
 
 ---
