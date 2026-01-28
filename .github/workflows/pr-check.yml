@@ -45,3 +45,68 @@ jobs:
           echo "❌ Build failed" >> $env:GITHUB_STEP_SUMMARY
         }
       shell: powershell
+
+  format:
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        repository: ${{ github.event.pull_request.head.repo.full_name }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install clang-format
+      run: |
+        if (-not (Get-Command clang-format -ErrorAction SilentlyContinue)) {
+          choco install llvm --version=17.0.6 -y --allow-downgrade
+        } else {
+          Write-Host "clang-format already installed"
+        }
+      shell: powershell
+
+    - name: Format code
+      run: |
+        $files = Get-ChildItem -Path src,include -Include *.cpp,*.h,*.hpp -Recurse
+        foreach ($file in $files) {
+          clang-format -i $file.FullName
+        }
+      shell: powershell
+
+    - name: Check for changes
+      id: check_changes
+      run: |
+        git diff --exit-code
+        if ($LASTEXITCODE -ne 0) {
+          echo "has_changes=true" >> $env:GITHUB_OUTPUT
+        } else {
+          echo "has_changes=false" >> $env:GITHUB_OUTPUT
+        }
+      shell: powershell
+
+    - name: Commit and push changes
+      if: steps.check_changes.outputs.has_changes == 'true'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add src include
+        git commit -m "style: auto-format code with clang-format"
+        git push
+      shell: powershell
+
+    - name: Format Summary
+      if: always()
+      run: |
+        echo "## Format Results" >> $env:GITHUB_STEP_SUMMARY
+        echo "" >> $env:GITHUB_STEP_SUMMARY
+        if ("${{ steps.check_changes.outputs.has_changes }}" -eq "true") {
+          echo "✅ Code formatted and committed" >> $env:GITHUB_STEP_SUMMARY
+        } else {
+          echo "✅ Code already properly formatted" >> $env:GITHUB_STEP_SUMMARY
+        }
+      shell: powershell
