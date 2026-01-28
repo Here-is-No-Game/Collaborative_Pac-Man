@@ -168,8 +168,19 @@ cmake --build build
 build\pacman_game.exe
 ```
 
+### 修改 AI 后重新编译
 
-### 项目贡献者
+```bash
+# 只需重新编译即可
+cmake --build build
+```
+
+### 团队协作流程
+
+如果你是团队成员，需要使用 Git 进行协作开发，请查看：
+- **[工作流程指南](docs/WORKFLOW.md)** - 完整的 Git/GitHub 协作流程
+
+---
 
 本项目由 HING 小组成员共同开发，作为教学框架供学习使用。
 
