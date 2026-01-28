@@ -1,4 +1,4 @@
-name: PR Check - Build and Format
+name: PR Check - Build
 
 on:
   pull_request:
@@ -38,66 +38,4 @@ jobs:
         echo "## Build Results" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "✅ Build completed successfully" >> $GITHUB_STEP_SUMMARY
-      shell: powershell
-
-  format:
-    name: Auto Format Code
-    runs-on: windows-latest
-    needs: build
-    if: success()
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        ref: ${{ github.head_ref }}
-        token: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Install clang-format
-      run: |
-        choco install llvm -y --force
-      shell: powershell
-
-    - name: Format code with clang-format
-      run: |
-        $files = Get-ChildItem -Path src,include -Include *.cpp,*.h,*.hpp -Recurse
-        foreach ($file in $files) {
-          clang-format -i $file.FullName
-          Write-Host "Formatted: $($file.FullName)" -ForegroundColor Green
-        }
-      shell: powershell
-
-    - name: Check for formatting changes
-      id: check_changes
-      run: |
-        git diff --exit-code
-        if ($LASTEXITCODE -ne 0) {
-          echo "has_changes=true" >> $env:GITHUB_OUTPUT
-          Write-Host "Code was formatted, changes will be committed" -ForegroundColor Yellow
-        } else {
-          echo "has_changes=false" >> $env:GITHUB_OUTPUT
-          Write-Host "No formatting changes needed" -ForegroundColor Green
-        }
-      shell: powershell
-
-    - name: Commit formatted code
-      if: steps.check_changes.outputs.has_changes == 'true'
-      run: |
-        git config --local user.email "github-actions[bot]@users.noreply.github.com"
-        git config --local user.name "github-actions[bot]"
-        git add -A
-        git commit -m "style: auto-format code with clang-format [skip ci]"
-        git push
-      shell: bash
-
-    - name: Format Summary
-      if: always()
-      run: |
-        echo "## Format Results" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        if ("${{ steps.check_changes.outputs.has_changes }}" -eq "true") {
-          echo "✅ Code formatted and committed" >> $GITHUB_STEP_SUMMARY
-        } else {
-          echo "✅ No formatting changes needed" >> $GITHUB_STEP_SUMMARY
-        }
       shell: powershell
