@@ -536,8 +536,7 @@ LGTM! (Looks Good To Me)
 - ✅ 没有冲突
 
 **合并方式**：
-- 使用 **Squash and merge**（推荐）- 将多个 commit 合并为一个
-- 或 **Merge commit** - 保留所有 commit 历史
+- 使用 **Rebase and merge**（推荐）- 保持线性提交关系
 
 ---
 
@@ -792,14 +791,6 @@ git diff
 2. **搜索 Issue**：看看是否有人遇到过类似问题
 3. **创建 Issue**：详细描述问题，寻求帮助
 4. **询问团队成员**：在群里或 Issue 中讨论
-5. **联系导师/助教**：复杂问题可以寻求指导
-
-### 学习资源
-
-- **Git 教程**：https://git-scm.com/book/zh/v2
-- **GitHub 文档**：https://docs.github.com/cn
-- **Conventional Commits**：https://www.conventionalcommits.org/zh-hans/
-- **C++ 参考**：https://zh.cppreference.com/
 
 ---
 
