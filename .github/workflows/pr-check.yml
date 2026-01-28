@@ -7,14 +7,13 @@ on:
       - main
 
 jobs:
-  build-and-format:
+  build:
+    name: Build Project
     runs-on: windows-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
     - name: Setup MSVC
       uses: microsoft/setup-msbuild@v2
@@ -32,6 +31,27 @@ jobs:
     - name: Build Project
       run: cmake --build build
       shell: cmd
+
+    - name: Build Summary
+      if: always()
+      run: |
+        echo "## Build Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Build completed successfully" >> $GITHUB_STEP_SUMMARY
+      shell: powershell
+
+  format:
+    name: Auto Format Code
+    runs-on: windows-latest
+    needs: build
+    if: success()
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref }}
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Install clang-format
       run: |
@@ -70,19 +90,14 @@ jobs:
         git push
       shell: bash
 
-    - name: Build Summary
+    - name: Format Summary
       if: always()
       run: |
-        echo "## Build Results" >> $GITHUB_STEP_SUMMARY
+        echo "## Format Results" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        if ($env:BUILD_SUCCESS -eq "true") {
-          echo "✅ Build completed successfully" >> $GITHUB_STEP_SUMMARY
+        if ("${{ steps.check_changes.outputs.has_changes }}" -eq "true") {
+          echo "✅ Code formatted and committed" >> $GITHUB_STEP_SUMMARY
         } else {
-          echo "❌ Build failed" >> $GITHUB_STEP_SUMMARY
-        }
-        if ($env:FORMAT_SUCCESS -eq "true") {
-          echo "✅ Code formatting check passed" >> $GITHUB_STEP_SUMMARY
-        } else {
-          echo "❌ Code formatting check failed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ No formatting changes needed" >> $GITHUB_STEP_SUMMARY
         }
       shell: powershell
