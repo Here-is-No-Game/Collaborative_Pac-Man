@@ -78,8 +78,8 @@ void RandomMapGenerator::generateMaze(int startX, int startY) {
             currentMap->setCell(mx, my, CellType::EMPTY);
             currentMap->setCell(nx, ny, CellType::EMPTY);
 
-            // 小概率（15%）创建小型开放区域
-            if ((randomEngine() % 100) < 15) {
+            // 小概率创建小型开放区域
+            if ((randomEngine() % 100) < GameConfig::OPEN_AREA_PROBABILITY) {
                 createSmallOpenArea(nx, ny);
             }
 
