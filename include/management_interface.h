@@ -22,16 +22,4 @@ class ManagementInterface {
 
     // 辅助方法：根据方向获取新位置
     Position getNewPosition(const Position &currentPos, Direction dir) const;
-
-    // 辅助方法：更新角色位置
-    void updateCharacterPosition(GameStateManager &gameState, int characterIndex, const Position &newPos);
-
-    // 辅助方法：消耗豆子
-    void consumeDot(GameStateManager &gameState, const Position &pos);
-
-    // 辅助方法：检查吃豆人是否与怪物碰撞
-    bool checkPacmanMonsterCollision(const GameStateManager &gameState) const;
-
-    // 辅助方法：检查是否获胜（所有豆子被吃完）
-    bool checkWinCondition(const GameStateManager &gameState) const;
 };
