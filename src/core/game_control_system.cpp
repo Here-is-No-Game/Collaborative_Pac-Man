@@ -1,7 +1,8 @@
 #include "../../include/game_control_system.h"
 #include <fstream>
 
-GameControlSystem::GameControlSystem() : isPaused(false), playbackStatus(PlaybackStatus::PLAYING), currentHistoryIndex(-1), maxHistorySize(100) {}
+GameControlSystem::GameControlSystem()
+    : isPaused(false), playbackStatus(PlaybackStatus::PLAYING), currentHistoryIndex(-1), maxHistorySize(100) {}
 
 GameControlSystem::GameControlSystem(int maxHistory)
     : isPaused(false), playbackStatus(PlaybackStatus::PLAYING), currentHistoryIndex(-1), maxHistorySize(maxHistory) {}
@@ -151,7 +152,9 @@ void GameControlSystem::reset() {
 
 bool GameControlSystem::canStepBackward() const { return currentHistoryIndex > 0; }
 
-bool GameControlSystem::canStepForward() const { return currentHistoryIndex < static_cast<int>(stateHistory.size()) - 1; }
+bool GameControlSystem::canStepForward() const {
+    return currentHistoryIndex < static_cast<int>(stateHistory.size()) - 1;
+}
 
 GameStateManager GameControlSystem::stepBackward() {
     if (canStepBackward()) {

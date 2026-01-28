@@ -8,8 +8,8 @@
 class GameControlSystem {
   public:
     enum class PlaybackStatus {
-        PLAYING,   // 正在运行
-        PAUSED,    // 暂停
+        PLAYING,          // 正在运行
+        PAUSED,           // 暂停
         STEPPED_BACKWARD, // 刚刚后退一步
         STEPPED_FORWARD   // 刚刚前进一步
     };
@@ -45,12 +45,12 @@ class GameControlSystem {
     void clearHistory();
 
     // 回放控制
-    bool canStepBackward() const;  // 是否可以后退一回合
-    bool canStepForward() const;   // 是否可以前进一回合
-    GameStateManager stepBackward(); // 后退一回合
-    GameStateManager stepForward();  // 前进一回合
+    bool canStepBackward() const;            // 是否可以后退一回合
+    bool canStepForward() const;             // 是否可以前进一回合
+    GameStateManager stepBackward();         // 后退一回合
+    GameStateManager stepForward();          // 前进一回合
     GameStateManager restartFromBeginning(); // 从第一回合重新开始
-    bool hasHistory() const;       // 是否有历史记录
+    bool hasHistory() const;                 // 是否有历史记录
 
     // 游戏重启
     void reset();

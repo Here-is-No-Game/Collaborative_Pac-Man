@@ -220,9 +220,9 @@ void InitializeGame(HWND hwnd) {
     gameLoop = std::make_unique<TurnBasedGameLoop>(map, characters);
 
     // 设置AI代理
-    gameLoop->setAIAgent(0, std::make_unique<PacmanAI>());  // 吃豆人
+    gameLoop->setAIAgent(0, std::make_unique<PacmanAI>()); // 吃豆人
     for (int i = 0; i < GameConfig::MONSTER_COUNT; ++i) {
-        gameLoop->setAIAgent(1 + i, std::make_unique<MonsterAI>());  // 怪物
+        gameLoop->setAIAgent(1 + i, std::make_unique<MonsterAI>()); // 怪物
     }
 
     // 设置管理系统

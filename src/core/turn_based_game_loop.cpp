@@ -61,9 +61,8 @@ std::vector<Action> TurnBasedGameLoop::collectAIActions() {
         // 如果有对应的AI代理，获取其决策
         if (i < aiAgents.size() && aiAgents[i]) {
             // 根据角色类型选择对应的视野系统
-            VisibilitySystem &visSystem = (characters[i].type == CharacterType::PACMAN)
-                                          ? pacmanVisibilitySystem
-                                          : monsterVisibilitySystem;
+            VisibilitySystem &visSystem =
+                (characters[i].type == CharacterType::PACMAN) ? pacmanVisibilitySystem : monsterVisibilitySystem;
 
             // 计算可见区域
             VisibleArea visibleArea =
