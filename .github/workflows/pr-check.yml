@@ -96,8 +96,8 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add src include
-        git commit -m "style: auto-format code with clang-format"
-        git push
+        git commit --amend --no-edit
+        git push --force-with-lease
       shell: powershell
 
     - name: Format Summary
