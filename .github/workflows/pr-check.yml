@@ -81,12 +81,13 @@ jobs:
     - name: Check for changes
       id: check_changes
       run: |
-        git diff --exit-code
-        if ($LASTEXITCODE -ne 0) {
+        git diff --exit-code; $exitCode = $LASTEXITCODE
+        if ($exitCode -ne 0) {
           echo "has_changes=true" >> $env:GITHUB_OUTPUT
         } else {
           echo "has_changes=false" >> $env:GITHUB_OUTPUT
         }
+        exit 0
       shell: powershell
 
     - name: Commit and push changes
