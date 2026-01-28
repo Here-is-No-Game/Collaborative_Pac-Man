@@ -3,9 +3,9 @@
 > 一个基于 C++ 的协作式吃豆人游戏教学项目
 > 由成都大学 HING 游戏开发学习小组开发
 
-<div align="center">
-  <img src="docs/images/gameplay.png" alt="Game Screenshot" width="600">
-</div>
+<p align="center">
+  <img src="docs/images/gameplay.png" alt="Game Screenshot" width="600"/>
+</p>
 
 ---
 
