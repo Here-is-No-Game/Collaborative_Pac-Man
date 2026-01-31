@@ -206,12 +206,45 @@ src/core/
 项目采用 **Git Flow** 分支管理策略：
 
 ```
-main          # 主分支（稳定版本，受保护）
+main          # 主分支（干净框架，稳定版本，受保护）
+  ↓
+dev           # 开发分支（干净框架，开发版本，受保护）
+  ↓
+feature       # 学生集成分支（学生任务集成，受保护）
   ↑
-dev           # 开发分支（集成分支，受保护）
-  ↑
-feature/*     # 功能分支（个人开发分支）
+feature/*     # 学生个人开发分支
 ```
+
+**分支说明**：
+- `main` 和 `dev`：存放干净的游戏框架代码，不包含学生实现
+- `feature`：学生学习任务的集成分支，包含所有学生的实现
+- `feature/*`：学生个人开发分支，完成后合并到 `feature`
+- `feature` 定期从 `main` 拉取框架更新
+
+### feature 分支维护（管理员操作）
+
+`feature` 分支需要定期从 `main` 拉取框架更新：
+
+```bash
+# 1. 切换到 feature 分支
+git checkout feature
+
+# 2. 拉取最新代码
+git pull origin feature
+
+# 3. 从 main 合并框架更新
+git pull origin main
+
+# 4. 解决冲突（如果有）
+# 编辑冲突文件，然后：
+git add .
+git commit -m "merge: update framework from main"
+
+# 5. 推送到远程
+git push origin feature
+```
+
+**注意**：此操作通常由项目管理员执行，学生无需操作。
 
 ### 分支命名规范
 
@@ -231,11 +264,11 @@ feature/management-system-wangwu
 ### 创建并切换到 feature 分支
 
 ```bash
-# 1. 确保在 dev 分支
-git checkout dev
+# 1. 确保在 main 分支（获取干净框架）
+git checkout main
 
 # 2. 拉取最新代码
-git pull origin dev
+git pull origin main
 
 # 3. 创建并切换到你的 feature 分支
 git checkout -b feature/pacman-ai-zhangsan
@@ -246,25 +279,25 @@ git push -u origin feature/pacman-ai-zhangsan
 
 ### 保持分支更新
 
-定期同步 dev 分支的最新代码：
+定期同步 main 分支的最新框架代码：
 
 ```bash
-# 1. 切换到 dev 分支
-git checkout dev
+# 1. 切换到 main 分支
+git checkout main
 
 # 2. 拉取最新代码
-git pull origin dev
+git pull origin main
 
 # 3. 切换回你的 feature 分支
 git checkout feature/pacman-ai-zhangsan
 
-# 4. 合并 dev 的更新
-git merge dev
+# 4. 合并 main 的更新
+git merge main
 
 # 5. 解决冲突（如果有）
 # 编辑冲突文件，然后：
 git add .
-git commit -m "merge: resolve conflicts with dev"
+git commit -m "merge: resolve conflicts with main"
 
 # 6. 推送到远程
 git push
@@ -343,7 +376,7 @@ git push
 
 ### 何时创建 PR
 
-当你完成一个**阶段性成果**时，创建 PR 到 `dev` 分支：
+当你完成一个**阶段性成果**时，创建 PR 到 `feature` 分支：
 
 - ✅ 实现了一个完整的功能模块
 - ✅ 代码可以编译通过
@@ -365,7 +398,7 @@ git push
 2. **在 GitHub 上创建 PR**
    - 访问项目仓库
    - 点击 **Pull requests** → **New pull request**
-   - Base: `dev` ← Compare: `feature/pacman-ai-zhangsan`
+   - Base: `feature` ← Compare: `feature/pacman-ai-zhangsan`
    - 点击 **Create pull request**
 
 3. **填写 PR 信息**
@@ -428,7 +461,7 @@ git push
 #### 1. 拉取 PR 代码到本地
 
 ```bash
-# 方法一：通过 GitHub CLI（推荐）
+# 方法一：通过 GitHub CLI（推荐，需要在GitHub下载安装）
 gh pr checkout 123
 
 # 方法二：手动拉取
@@ -648,15 +681,15 @@ class PacmanAI : public AIInterface {
 ### Q1: 如何解决合并冲突？
 
 ```bash
-# 1. 拉取最新的 dev 分支
-git checkout dev
-git pull origin dev
+# 1. 拉取最新的 main 分支
+git checkout main
+git pull origin main
 
 # 2. 切换到你的 feature 分支
 git checkout feature/pacman-ai-zhangsan
 
-# 3. 合并 dev（可能产生冲突）
-git merge dev
+# 3. 合并 main（可能产生冲突）
+git merge main
 
 # 4. 查看冲突文件
 git status
@@ -665,12 +698,12 @@ git status
 # <<<<<<< HEAD
 # 你的代码
 # =======
-# dev 分支的代码
-# >>>>>>> dev
+# main 分支的代码
+# >>>>>>> main
 
 # 6. 标记冲突已解决
 git add .
-git commit -m "merge: resolve conflicts with dev"
+git commit -m "merge: resolve conflicts with main"
 
 # 7. 推送
 git push
@@ -699,7 +732,7 @@ git checkout feature/monster-ai-lisi
 
 # 方法二：只查看不切换
 git fetch origin
-git diff origin/dev..origin/feature/monster-ai-lisi
+git diff origin/feature..origin/feature/monster-ai-lisi
 ```
 
 ### Q4: PR 被拒绝了怎么办？
@@ -753,10 +786,10 @@ git commit -m "feat(scope): message"
 git push
 
 # 拉取更新
-git pull origin dev
+git pull origin main
 
 # 合并分支
-git merge dev
+git merge main
 
 # 查看日志
 git log --oneline --graph
@@ -768,17 +801,17 @@ git diff
 ### 工作流程速查
 
 ```
-1. git checkout dev
-2. git pull origin dev
+1. git checkout main
+2. git pull origin main
 3. git checkout -b feature/xxx
 4. 编写代码
 5. git add .
 6. git commit -m "..."
 7. git push -u origin feature/xxx
-8. 创建 PR (GitHub 网页)
+8. 创建 PR (GitHub 网页，目标分支: feature)
 9. 等待审查
 10. 根据反馈修改
-11. 合并到 dev
+11. 合并到 feature
 ```
 
 ---
