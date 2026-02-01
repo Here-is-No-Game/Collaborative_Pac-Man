@@ -48,7 +48,10 @@
    # 生成 SSH 密钥
    ssh-keygen -t ed25519 -C "你的邮箱"
 
-   # 查看公钥
+   # 查看公钥（Windows PowerShell）
+   type %USERPROFILE%\.ssh\id_ed25519.pub
+
+   # 或使用 Git Bash
    cat ~/.ssh/id_ed25519.pub
 
    # 将公钥添加到 GitHub: Settings -> SSH and GPG keys -> New SSH key
@@ -107,7 +110,13 @@ cmake --build build
 如果遇到编译问题，可以清理后重新构建：
 
 ```bash
-# 删除 build 目录
+# 删除 build 目录（Windows PowerShell）
+Remove-Item -Recurse -Force build
+
+# 或使用 CMD
+rmdir /s /q build
+
+# 或使用 Git Bash
 rm -rf build
 
 # 重新生成和编译
