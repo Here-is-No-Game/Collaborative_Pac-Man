@@ -8,14 +8,23 @@ struct Position {
     int y;
 
     Position() : x(0), y(0) {}
-    Position(int x, int y) : x(x), y(y) {}
+    Position(int x, int y) : x(x), y(y) {}//带参重构函数，提供怪物和主角位置
 
-    bool operator==(const Position &other) const { return x == other.x && y == other.y; }
+    bool operator==(const Position &other) const 
+    {
+         return x == other.x && y == other.y; 
+    }
 
-    bool operator!=(const Position &other) const { return !(*this == other); }
+    bool operator!=(const Position &other) const 
+    {
+         return !(*this == other); 
+    }
 
     // 计算曼哈顿距离
-    int manhattanDistance(const Position &other) const { return std::abs(x - other.x) + std::abs(y - other.y); }
+    int manhattanDistance(const Position &other) const 
+    {
+         return std::abs(x - other.x) + std::abs(y - other.y); 
+    }
 };
 
 // Direction 枚举
@@ -57,7 +66,7 @@ inline const char *directionToString(Direction dir) {
 }
 
 // CellType 枚举
-enum class CellType { EMPTY, WALL, DOT };
+enum class CellType { EMPTY, WALL, DOT };//单元格类型空，墙，豆
 
 inline const char *cellTypeToString(CellType type) {
     switch (type) {
