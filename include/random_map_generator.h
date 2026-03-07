@@ -17,7 +17,7 @@ class RandomMapGenerator {
     void generateMaze(int startX, int startY);
 
     // 创建小型开放区域
-    bool RandomMapGenerator::createCycle(int centerX, int centerY);
+    bool createCycle(int centerX, int centerY);
 
     // 辅助方法
     bool isInBounds(int x, int y) const;
