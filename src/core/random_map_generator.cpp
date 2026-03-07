@@ -78,11 +78,6 @@ void RandomMapGenerator::generateMaze(int startX, int startY) {
             currentMap->setCell(mx, my, CellType::EMPTY);
             currentMap->setCell(nx, ny, CellType::EMPTY);
 
-            // 小概率创建小型开放区域
-            if ((randomEngine() % 100) < GameConfig::OPEN_AREA_PROBABILITY) {
-                createSmallOpenArea(nx, ny);
-            }
-
             // 将邻居加入栈
             stack.push_back(Position(nx, ny));
         } else {
@@ -90,26 +85,36 @@ void RandomMapGenerator::generateMaze(int startX, int startY) {
             stack.pop_back();
         }
     }
+
+    // 创建若干个环
+    int cycleNum = randomEngine() % 3 + 3;
+    while (cycleNum) {
+        int _x = randomEngine() % GameConfig::MAP_WIDTH;
+        int _y = randomEngine() % GameConfig::MAP_HEIGHT;
+        cycleNum -= createCycle(_x, _y);
+    }
 }
 
-void RandomMapGenerator::createSmallOpenArea(int centerX, int centerY) {
-    // 随机选择开放区域大小：2x2 或 3x3
-    int size = (randomEngine() % 2 == 0) ? 2 : 3;
+bool RandomMapGenerator::createCycle(int centerX, int centerY) {
+    // 尝试打破目标位置的墙，创建环,成功打破返回true
 
-    // 计算开放区域的范围
-    int halfSize = size / 2;
+    if (!currentMap->isInBounds(centerX, centerY) || !currentMap->isWall(Position(centerX, centerY))) return false;
 
-    for (int dy = -halfSize; dy <= halfSize; ++dy) {
-        for (int dx = -halfSize; dx <= halfSize; ++dx) {
-            int x = centerX + dx;
-            int y = centerY + dy;
+    std::vector<bool> tmp;
+    int dx[] = {0, 0, -1, 1};
+    int dy[] = {-1, 1, 0, 0};
 
-            // 确保在边界内
-            if (x > 0 && x < width - 1 && y > 0 && y < height - 1) {
-                currentMap->setCell(x, y, CellType::EMPTY);
-            }
+    for (int i = 0; i < 4; i++) {
+        tmp.emplace_back(currentMap->isWall(Position(centerX + dx[i], centerY + dy[i])));
+    }
+
+    if (currentMap->isWall(Position(centerX, centerY))) {
+        if (tmp[0] == tmp[1] && tmp[2] == tmp[3] && tmp[2] != tmp[1]) {
+            currentMap->setCell(Position(centerX, centerY), CellType::EMPTY);
+            return true;
         }
     }
+    return false;
 }
 
 void RandomMapGenerator::placeDots() {
