@@ -1,0 +1,829 @@
+# 项目工作流程指南
+
+> HING 游戏开发学习小组 - Collaborative Pac-Man 项目
+
+本文档介绍从零开始参与项目的完整工作流程，包括 Git/GitHub 使用、代码阅读、开发提交、代码审查等环节。
+
+---
+
+## 📋 目录
+
+1. [环境准备](#环境准备)
+2. [获取项目代码](#获取项目代码)
+3. [编译运行](#编译运行)
+4. [代码阅读顺序](#代码阅读顺序)
+5. [开发流程](#开发流程)
+6. [分支管理](#分支管理)
+7. [提交规范](#提交规范)
+8. [Pull Request 流程](#pull-request-流程)
+9. [代码审查](#代码审查)
+10. [Issue 交流](#issue-交流)
+11. [常见问题](#常见问题)
+
+---
+
+## 环境准备
+
+### 必需工具
+
+1. **Git**
+   - 下载：https://git-scm.com/
+   - 安装后配置用户信息：
+     ```bash
+     git config --global user.name "你的名字"
+     git config --global user.email "你的邮箱"
+     ```
+
+2. **Visual Studio** (MSVC 编译器)
+   - 下载：https://visualstudio.microsoft.com/
+   - 安装时选择"使用 C++ 的桌面开发"
+
+
+
+### GitHub 账号
+
+1. 注册 GitHub 账号：https://github.com/
+2. 配置 SSH 密钥（推荐）：
+   ```bash
+   # 生成 SSH 密钥
+   ssh-keygen -t ed25519 -C "你的邮箱"
+
+   # 查看公钥（Windows PowerShell）
+   type %USERPROFILE%\.ssh\id_ed25519.pub
+
+   # 或使用 Git Bash
+   cat ~/.ssh/id_ed25519.pub
+
+   # 将公钥添加到 GitHub: Settings -> SSH and GPG keys -> New SSH key
+   ```
+
+---
+
+## 获取项目代码
+
+### 1. 克隆项目
+
+```bash
+# 克隆主仓库
+git clone git@github.com:Here-is-No-Game/Collaborative_Pac-Man.git
+
+# 进入项目目录
+cd Collaborative_Pac-Man
+```
+
+### 2. 查看远程仓库
+
+```bash
+# 查看远程仓库
+git remote -v
+# origin  git@github.com:Here-is-No-Game/Collaborative_Pac-Man.git (fetch)
+# origin  git@github.com:Here-is-No-Game/Collaborative_Pac-Man.git (push)
+```
+
+---
+
+## 编译运行
+
+### 首次编译
+
+```bash
+# 1. 生成构建文件
+cmake -B build -G Ninja
+
+# 2. 编译项目
+cmake --build build
+
+# 3. 运行游戏
+build\pacman_game.exe
+```
+
+### 后续编译
+
+修改代码后，只需重新编译：
+
+```bash
+cmake --build build
+```
+
+### 清理构建
+
+如果遇到编译问题，可以清理后重新构建：
+
+```bash
+# 删除 build 目录（Windows PowerShell）
+Remove-Item -Recurse -Force build
+
+# 或使用 CMD
+rmdir /s /q build
+
+# 或使用 Git Bash
+rm -rf build
+
+# 重新生成和编译
+cmake -B build -G Ninja
+cmake --build build
+```
+
+---
+
+## 代码阅读顺序
+
+### 第一步：阅读项目文档
+
+1. **README.md** - 了解项目概况
+2. **你的任务手册** - 根据角色阅读对应文档：
+   - 学生 A → `docs/student_manuals/StudentA_PacmanAI.md`
+   - 学生 B → `docs/student_manuals/StudentB_MonsterAI.md`
+   - 学生 C → `docs/student_manuals/StudentC_ManagementSystem.md`
+
+### 第二步：理解数据结构
+
+阅读以下头文件，理解核心数据结构：
+
+```
+include/
+├── game_types.h          # 基础类型：Position, Direction, Action, Character
+├── visible_area.h        # 可见区域（AI 的"眼睛"）
+├── ai_interface.h        # AI 接口定义
+└── management_interface.h # 管理系统接口
+```
+
+### 第三步：查看示例实现
+
+根据你的角色，阅读对应的示例代码：
+
+**学生 A & B（AI 开发）**：
+```
+src/agents/
+├── pacman_ai.cpp         # 吃豆人 AI 示例（随机移动）
+└── monster_ai.cpp        # 怪物 AI 示例（随机移动）
+```
+
+**学生 C（管理系统）**：
+```
+src/management/
+└── management_system.cpp # 管理系统示例（基础实现）
+```
+
+### 第四步：理解游戏循环（可选）
+
+如果想深入了解框架，可以阅读：
+
+```
+src/core/
+├── turn_based_game_loop.cpp  # 回合制游戏循环
+├── game_state_manager.cpp    # 游戏状态管理
+└── visibility_system.cpp     # 视野系统
+```
+
+**注意**：核心系统代码不需要修改，只需理解即可。
+
+---
+
+## 开发流程
+
+### 完整开发流程图
+
+```
+1. 创建 feature 分支
+   ↓
+2. 阅读任务文档
+   ↓
+3. 编写代码
+   ↓
+4. 本地测试
+   ↓
+5. 提交到 feature 分支
+   ↓
+6. 推送到远程仓库
+   ↓
+7. 创建 Pull Request 到 dev 分支
+   ↓
+8. 等待代码审查（至少 2 人）
+   ↓
+9. 根据反馈修改代码
+   ↓
+10. 审查通过后合并到 dev
+```
+
+---
+
+## 分支管理
+
+### 分支策略
+
+项目采用 **Git Flow** 分支管理策略：
+
+```
+main          # 主分支（稳定版本，受保护）
+  ↑
+dev           # 开发分支（集成分支，受保护）
+  ↑
+feature/*     # 功能分支（个人开发分支）
+```
+
+### 分支命名规范
+
+根据你的角色创建对应的 feature 分支：
+
+- **学生 A**：`feature/pacman-ai-你的名字`
+- **学生 B**：`feature/monster-ai-你的名字`
+- **学生 C**：`feature/management-system-你的名字`
+
+示例：
+```
+feature/pacman-ai-zhangsan
+feature/monster-ai-lisi
+feature/management-system-wangwu
+```
+
+### 创建并切换到 feature 分支
+
+```bash
+# 1. 确保在 dev 分支
+git checkout dev
+
+# 2. 拉取最新代码
+git pull origin dev
+
+# 3. 创建并切换到你的 feature 分支
+git checkout -b feature/pacman-ai-zhangsan
+
+# 4. 推送分支到远程
+git push -u origin feature/pacman-ai-zhangsan
+```
+
+### 保持分支更新
+
+定期同步 dev 分支的最新代码：
+
+```bash
+# 1. 切换到 dev 分支
+git checkout dev
+
+# 2. 拉取最新代码
+git pull origin dev
+
+# 3. 切换回你的 feature 分支
+git checkout feature/pacman-ai-zhangsan
+
+# 4. 合并 dev 的更新
+git merge dev
+
+# 5. 解决冲突（如果有）
+# 编辑冲突文件，然后：
+git add .
+git commit -m "merge: resolve conflicts with dev"
+
+# 6. 推送到远程
+git push
+```
+
+---
+
+## 提交规范
+
+### Commit Message 格式
+
+使用 **Conventional Commits** 规范：
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+### Type 类型
+
+- `feat`: 新功能
+- `fix`: 修复 bug
+- `refactor`: 重构代码
+- `docs`: 文档更新
+- `style`: 代码格式调整（不影响功能）
+- `test`: 测试相关
+- `chore`: 构建/工具配置
+
+### Scope 范围
+
+- `pacman-ai`: 吃豆人 AI
+- `monster-ai`: 怪物 AI
+- `management`: 管理系统
+- `core`: 核心系统
+- `docs`: 文档
+
+### 示例
+
+```bash
+# 好的提交示例
+git commit -m "feat(pacman-ai): implement BFS pathfinding to nearest dot"
+git commit -m "fix(monster-ai): fix wall collision detection bug"
+git commit -m "refactor(management): simplify collision detection logic"
+
+# 不好的提交示例
+git commit -m "update code"
+git commit -m "fix bug"
+git commit -m "完成作业"
+```
+
+### 提交流程
+
+```bash
+# 1. 查看修改的文件
+git status
+
+# 2. 添加修改的文件
+git add src/agents/pacman_ai.cpp
+
+# 或添加所有修改
+git add .
+
+# 3. 提交（附带清晰的 commit message）
+git commit -m "feat(pacman-ai): add dot collection strategy"
+
+# 4. 推送到远程 feature 分支
+git push
+```
+
+---
+
+## Pull Request 流程
+
+### 何时创建 PR
+
+当你完成一个**阶段性成果**时，创建 PR 到 `dev` 分支：
+
+- ✅ 实现了一个完整的功能模块
+- ✅ 代码可以编译通过
+- ✅ 本地测试通过
+- ✅ 代码符合规范
+
+**不要**：
+- ❌ 代码还没写完就提 PR
+- ❌ 代码无法编译
+- ❌ 只是保存进度（应该提交到自己的 feature 分支）
+
+### 创建 PR 步骤
+
+1. **推送代码到远程**
+   ```bash
+   git push origin feature/pacman-ai-zhangsan
+   ```
+
+2. **在 GitHub 上创建 PR**
+   - 访问项目仓库
+   - 点击 **Pull requests** → **New pull request**
+   - Base: `dev` ← Compare: `feature/pacman-ai-zhangsan`
+   - 点击 **Create pull request**
+
+3. **填写 PR 信息**
+
+   **标题格式**：
+   ```
+   [学生A] 实现吃豆人寻找最近豆子策略
+   [学生B] 实现怪物追踪算法
+   [学生C] 完善碰撞检测系统
+   ```
+
+   **描述模板**：
+   ```markdown
+   ## 功能描述
+   实现了吃豆人的 BFS 路径规划算法，可以找到最近的豆子并规划路径。
+
+   ## 主要改动
+   - 添加 BFS 算法实现
+   - 添加路径缓存机制
+   - 优化避障逻辑
+
+   ## 测试情况
+   - [x] 编译通过
+   - [x] 本地运行正常
+   - [x] 能够正确找到最近的豆子
+   - [x] 避障功能正常
+
+   ## 截图/演示
+   （可选）添加游戏运行截图或 GIF
+
+   ## 相关 Issue
+   Closes #12
+   ```
+
+4. **添加标签和审查者**
+   - 添加标签：`student-a`, `enhancement`, `in-progress` 等
+   - 指定审查者：至少 2 名团队成员
+   - 关联相关 Issue（如果有）
+
+### PR 审查要求
+
+**强制要求**：
+- ✅ **至少 2 人 Review 并 Approve**
+- ✅ 代码编译通过
+- ✅ 没有明显的 bug
+- ✅ 符合代码规范
+
+**审查者职责**：
+- 仔细阅读代码
+- 测试功能是否正常
+- 提出改进建议
+- 批准或请求修改
+
+---
+
+## 代码审查
+
+### 作为审查者
+
+#### 1. 拉取 PR 代码到本地
+
+```bash
+# 方法一：通过 GitHub CLI（推荐）
+gh pr checkout 123
+
+# 方法二：手动拉取
+git fetch origin pull/123/head:pr-123
+git checkout pr-123
+```
+
+#### 2. 编译并测试
+
+```bash
+# 编译代码
+cmake --build build
+
+# 运行游戏，测试功能
+build\pacman_game.exe
+```
+
+#### 3. 代码审查要点
+
+**功能性**：
+- ✅ 功能是否按预期工作
+- ✅ 是否有明显的 bug
+- ✅ 边界情况是否处理
+
+**代码质量**：
+- ✅ 代码逻辑是否清晰
+- ✅ 变量命名是否合理
+- ✅ 是否有重复代码
+- ✅ 注释是否充分
+
+**性能**：
+- ✅ 是否有性能问题
+- ✅ 算法复杂度是否合理
+
+**规范**：
+- ✅ 是否符合项目代码风格
+- ✅ Commit message 是否规范
+
+#### 4. 提交审查意见
+
+在 GitHub PR 页面：
+
+**请求修改**：
+```markdown
+## 总体评价
+代码逻辑清晰，功能基本实现。有几处需要改进：
+
+## 主要问题
+1. **性能问题**：第 45 行的循环可以优化
+   ```cpp
+   // 建议改为：
+   for (const auto& dot : nearbyDots) { ... }
+   ```
+
+2. **边界检查缺失**：第 78 行需要检查数组越界
+
+## 次要建议
+- 变量 `tmp` 命名不够清晰，建议改为 `targetPosition`
+- 建议添加注释说明算法思路
+
+## 测试结果
+- [x] 编译通过
+- [x] 基本功能正常
+- [ ] 边界情况有 bug
+```
+
+**批准**：
+```markdown
+## 审查通过 ✅
+
+代码质量良好，功能实现完整。
+
+## 测试结果
+- [x] 编译通过
+- [x] 功能正常
+- [x] 性能良好
+
+LGTM! (Looks Good To Me)
+```
+
+### 作为 PR 提交者
+
+#### 响应审查意见
+
+1. **认真阅读所有评论**
+2. **逐条回复**：
+   - 同意的：修改代码并回复 "已修改"
+   - 不同意的：礼貌地说明理由
+3. **推送修改**：
+   ```bash
+   # 修改代码后
+   git add .
+   git commit -m "fix: address review comments"
+   git push
+   ```
+4. **请求重新审查**：
+   - 在 PR 页面点击 "Re-request review"
+
+#### 合并 PR
+
+当满足以下条件时，PR 可以合并：
+- ✅ 至少 2 人 Approve
+- ✅ 所有讨论已解决
+- ✅ CI 检查通过（如果有）
+- ✅ 没有冲突
+
+**合并方式**：
+- 使用 **Rebase and merge**（推荐）- 保持线性提交关系
+
+---
+
+## Issue 交流
+
+### 何时创建 Issue
+
+- 🐛 发现 bug
+- 💡 提出新功能建议
+- ❓ 遇到问题需要帮助
+- 📖 文档需要改进
+- 💬 讨论技术方案
+
+### Issue 模板
+
+#### Bug Report
+
+```markdown
+## Bug 描述
+简要描述遇到的问题
+
+## 复现步骤
+1. 编译项目
+2. 运行游戏
+3. 吃豆人移动到 (5, 5) 位置
+4. 出现崩溃
+
+## 预期行为
+应该正常移动
+
+## 实际行为
+程序崩溃，报错：...
+
+## 环境信息
+- OS: Windows 11
+- 编译器: MSVC 2022
+- 分支: feature/pacman-ai-zhangsan
+- Commit: abc1234
+
+## 截图/日志
+（如果有）
+```
+
+#### Feature Request
+
+```markdown
+## 功能描述
+希望添加 A* 路径规划算法
+
+## 动机
+当前的 BFS 算法在大地图上性能较差
+
+## 建议方案
+使用 A* 算法，以曼哈顿距离作为启发函数
+
+## 替代方案
+也可以考虑 Dijkstra 算法
+
+## 额外信息
+参考资料：...
+```
+
+#### Question
+
+```markdown
+## 问题描述
+如何在 AI 中记录历史位置？
+
+## 已尝试的方法
+尝试使用成员变量，但每次调用 getAction 都会重置
+
+## 相关代码
+```cpp
+class PacmanAI : public AIInterface {
+  private:
+    std::vector<Position> history;  // 这个会被重置吗？
+};
+```
+
+## 期望的帮助
+希望了解正确的实现方式
+```
+
+### Issue 标签
+
+使用标签分类 Issue：
+
+- `bug` - Bug 报告
+- `enhancement` - 新功能
+- `question` - 问题咨询
+- `documentation` - 文档相关
+- `help wanted` - 需要帮助
+- `good first issue` - 适合新手
+- `student-a` / `student-b` / `student-c` - 角色相关
+
+### Issue 讨论礼仪
+
+- ✅ 保持礼貌和尊重
+- ✅ 提供详细信息
+- ✅ 及时回复
+- ✅ 问题解决后关闭 Issue
+- ❌ 不要发表无关内容
+- ❌ 不要人身攻击
+
+---
+
+## 常见问题
+
+### Q1: 如何解决合并冲突？
+
+```bash
+# 1. 拉取最新的 feature 分支
+git checkout feature
+git pull origin feature
+
+# 2. 切换到你的 feature 分支
+git checkout feature/pacman-ai-zhangsan
+
+# 3. 合并 feature（可能产生冲突）
+git rebase feature
+
+# 4. 查看冲突文件
+git status
+
+# 5. 手动编辑冲突文件，解决冲突标记
+# <<<<<<< HEAD
+# 你的代码
+# =======
+# dev 分支的代码
+# >>>>>>> dev
+
+# 6. 标记冲突已解决
+git add .
+git commit -m "merge: resolve conflicts with feature"
+
+# 7. 推送
+git push
+```
+
+### Q2: 不小心提交到了错误的分支怎么办？
+
+```bash
+# 如果还没 push
+git reset --soft HEAD~1  # 撤销最后一次 commit，保留修改
+git stash                # 暂存修改
+git checkout 正确的分支
+git stash pop            # 恢复修改
+git add .
+git commit -m "..."
+
+# 如果已经 push，需要联系管理员
+```
+
+### Q3: 如何查看别人的代码？
+
+```bash
+# 方法一：切换到别人的分支
+git fetch origin
+git checkout feature/monster-ai-lisi
+
+# 方法二：只查看不切换
+git fetch origin
+git diff origin/dev..origin/feature/monster-ai-lisi
+```
+
+### Q4: PR 被拒绝了怎么办？
+
+1. 仔细阅读审查意见
+2. 理解问题所在
+3. 修改代码
+4. 推送更新
+5. 请求重新审查
+6. 如有疑问，在 PR 中讨论
+
+### Q5: 如何撤销本地修改？
+
+```bash
+# 撤销未暂存的修改
+git checkout -- 文件名
+
+# 撤销所有未暂存的修改
+git checkout -- .
+
+# 撤销已暂存的修改
+git reset HEAD 文件名
+
+# 完全重置到最后一次 commit
+git reset --hard HEAD
+```
+
+---
+
+## 快速参考
+
+### 常用命令速查
+
+```bash
+# 克隆项目
+git clone <url>
+
+# 创建分支
+git checkout -b feature/xxx
+
+# 查看状态
+git status
+
+# 添加修改
+git add .
+
+# 提交
+git commit -m "feat(scope): message"
+
+# 推送
+git push
+
+# 拉取更新
+git pull origin dev
+
+# 合并分支
+git merge dev
+
+# 查看日志
+git log --oneline --graph
+
+# 查看差异
+git diff
+```
+
+### 工作流程速查
+
+```
+1. git checkout dev
+2. git pull origin dev
+3. git checkout -b feature/xxx
+4. 编写代码
+5. git add .
+6. git commit -m "..."
+7. git push -u origin feature/xxx
+8. 创建 PR (GitHub 网页)
+9. 等待审查
+10. 根据反馈修改
+11. 合并到 dev
+```
+
+---
+
+## 获取帮助
+
+### 遇到问题时
+
+1. **查看文档**：README.md, 学生手册, WORKFLOW.md
+2. **搜索 Issue**：看看是否有人遇到过类似问题
+3. **创建 Issue**：详细描述问题，寻求帮助
+4. **询问团队成员**：在群里或 Issue 中讨论
+
+---
+
+## 总结
+
+遵循本工作流程，你将能够：
+
+✅ 正确使用 Git 和 GitHub
+✅ 在自己的 feature 分支上独立开发
+✅ 通过 PR 提交阶段性成果
+✅ 参与代码审查，提升代码质量
+✅ 通过 Issue 进行有效沟通
+✅ 与团队协作完成项目
+
+**记住**：
+- 🔒 永远在自己的 feature 分支上工作
+- 📝 写清晰的 commit message
+- 👥 至少 2 人审查才能合并
+- 💬 遇到问题及时沟通
+- 🎯 专注于你的任务模块
+
+**祝开发顺利！🚀**
+
+---
+
+*最后更新：2026-01-28*
+*HING 游戏开发学习小组*
