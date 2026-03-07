@@ -16,8 +16,8 @@ class RandomMapGenerator {
     // 深度优先搜索生成迷宫
     void generateMaze(int startX, int startY);
 
-    // 创建小型开放区域
-    void createSmallOpenArea(int centerX, int centerY);
+    // 创建环
+    bool createCycle(int centerX, int centerY);
 
     // 辅助方法
     bool isInBounds(int x, int y) const;
