@@ -1,77 +1,59 @@
 #include "../../include/management_system.h"
 
-  
-
 bool ManagementSystem::processActions(const std::vector<Action> &actions, GameStateManager &gameState) {
 
-      auto characters = gameState.getCharacters();
+    auto characters = gameState.getCharacters();
 
-  
+    // 确保行动数量与角色数量匹配
 
-      // 确保行动数量与角色数量匹配
+    if (actions.size() != characters.size()) {
 
-      if (actions.size() != characters.size()) {
+        return false;
+    }
 
-          return false;
+    // 处理所有角色的移动
 
-      }
+    for (size_t i = 0; i < characters.size(); ++i) {
 
-  
+        Position newPos = getNewPosition(characters[i].position, actions[i].direction);
 
-      // 处理所有角色的移动
+        // 根据角色类型进行不同的处理
 
-      for (size_t i = 0; i < characters.size(); ++i) {
+        if (characters[i].type == CharacterType::PACMAN) {
 
-          Position newPos = getNewPosition(characters[i].position, actions[i].direction);
+            // 吃豆人：检查是否越界（撞墙）
 
-  
+            if (isValidMove(gameState, newPos)) {
 
-          // 根据角色类型进行不同的处理
+                characters[i].position = newPos;
 
-          if (characters[i].type == CharacterType::PACMAN) {
+                // 新增：检测新位置是否有豆子，有则加10分并移除豆子
 
-              // 吃豆人：检查是否越界（撞墙）
+                if (gameState.getMap().hasDot(newPos)) {
 
-              if (isValidMove(gameState, newPos)) {
+                    gameState.incrementPacmanScore(10);
 
-                  characters[i].position = newPos;
+                    gameState.consumeDot(newPos);
+                }
+            }
 
-                  // 新增：检测新位置是否有豆子，有则加10分并移除豆子
+            // 如果撞墙，吃豆人保持在原位置
 
-                  if (gameState.getMap().hasDot(newPos)) {
+        } else if (characters[i].type == CharacterType::MONSTER) {
 
-                      gameState.incrementPacmanScore(10);
+            // 怪物：直接移动，每次移动加1分
 
-                      gameState.consumeDot(newPos);
+            characters[i].position = newPos;
 
-                  }
+            gameState.incrementMonsterScore(1);
+        }
+    }
 
-              }
+    // 更新角色位置到游戏状态
 
-              // 如果撞墙，吃豆人保持在原位置
+    gameState.setCharacters(characters);
 
-          } else if (characters[i].type == CharacterType::MONSTER) {
+    // 游戏继续
 
-              // 怪物：直接移动，每次移动加1分
-
-              characters[i].position = newPos;
-
-              gameState.incrementMonsterScore(1);
-
-          }
-
-      }
-
-  
-
-      // 更新角色位置到游戏状态
-
-      gameState.setCharacters(characters);
-
-  
-
-      // 游戏继续
-
-      return true;
-
+    return true;
 }
